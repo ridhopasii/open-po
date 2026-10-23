@@ -53,94 +53,13 @@ function whatsappDigits(phone: string) {
 
 export const instant = false;
 
-const demoBuyerOrders: OrderRow[] = [
-  {
-    id: "ord-demo-1",
-    order_code: "PO-7291A",
-    quantity: 2,
-    total_price_idr: 24000,
-    status: "ready",
-    created_at: "2026-10-23T08:30:00Z",
-    sellerContact: {
-      seller_name: "Nadia Putri",
-      whatsapp: "081234567801",
-    },
-    batch: {
-      title: "Batch PO Risol mayo",
-      pickup_at: "2026-10-24T12:00:00Z",
-      pickup_point: "Kantin Gedung Bersama / Gazebo Utama Kampus",
-      product: {
-        name: "Risol mayo",
-        seller: {
-          display_name: "Nadia Putri",
-          faculty: "Fakultas Pertanian",
-          avatar_path: null,
-        },
-      },
-    },
-  },
-  {
-    id: "ord-demo-2",
-    order_code: "PO-9104C",
-    quantity: 2,
-    total_price_idr: 20000,
-    status: "confirmed",
-    created_at: "2026-10-23T09:15:00Z",
-    sellerContact: {
-      seller_name: "Rafi Maulana",
-      whatsapp: "081234567802",
-    },
-    batch: {
-      title: "Batch PO Kopi susu gula aren",
-      pickup_at: "2026-10-24T14:00:00Z",
-      pickup_point: "Lobi Gedung Kuliah Bersama Fakultas Teknik",
-      product: {
-        name: "Kopi susu gula aren",
-        seller: {
-          display_name: "Rafi Maulana",
-          faculty: "Fakultas Teknik",
-          avatar_path: null,
-        },
-      },
-    },
-  },
-  {
-    id: "ord-demo-3",
-    order_code: "PO-3329D",
-    quantity: 1,
-    total_price_idr: 18000,
-    status: "pending",
-    created_at: "2026-10-23T10:00:00Z",
-    sellerContact: {
-      seller_name: "Salsabila N.",
-      whatsapp: "081234567803",
-    },
-    batch: {
-      title: "Batch PO Brownies sekat",
-      pickup_at: "2026-10-25T13:00:00Z",
-      pickup_point: "Depan Perpustakaan Pusat",
-      product: {
-        name: "Brownies sekat",
-        seller: {
-          display_name: "Salsabila N.",
-          faculty: "Fakultas Kesehatan Masyarakat",
-          avatar_path: null,
-        },
-      },
-    },
-  },
-];
-
 type PageProps = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-export default async function OrdersPage({
-  searchParams,
-}: PageProps) {
+export default async function OrdersPage({ searchParams }: PageProps) {
   await connection();
   const params = await searchParams;
-  const isDemo = params.demo === "1";
 
   let user = null;
   let orders: OrderRow[] = [];
@@ -197,12 +116,9 @@ export default async function OrdersPage({
     // Auth or connection issue
   }
 
-  if (!user && !isDemo) {
+  // Wajib masuk akun pembeli resmi
+  if (!user) {
     redirect(`/masuk?next=${encodeURIComponent("/akun/pesanan")}`);
-  }
-
-  if (!user && isDemo) {
-    orders = demoBuyerOrders;
   }
 
   return (
@@ -223,22 +139,6 @@ export default async function OrdersPage({
             </LogoutButton>
           )}
         </div>
-
-        {isDemo && (
-          <div className="seller-demo-banner" style={{ marginBottom: "24px" }}>
-            <div className="demo-banner-content">
-              <span className="demo-tag" style={{ background: "#dbeafe", color: "#1e40af" }}>
-                Mode Demo Akun Pembeli (Bima Prakoso)
-              </span>
-              <p>
-                Ini adalah pratinjau interaktif akun pembeli mahasiswa. Kamu bisa melihat status pesanan realtime, timeline progres, kontak WhatsApp penjual, dan simulasi pengambilan.
-              </p>
-            </div>
-            <Link href="/masuk?next=%2Fakun%2Fpesanan" className="button button-small">
-              Masuk Akun Asli →
-            </Link>
-          </div>
-        )}
 
         {params.baru && (
           <div className="success-banner">
@@ -301,10 +201,10 @@ export default async function OrdersPage({
         ) : (
           <div className="empty-market">
             <div className="empty-market-copy">
-              <h3>Belum ada pesanan</h3>
-              <p>PO yang kamu ikuti akan tampil di sini.</p>
+              <h3>Belum ada pesanan aktif</h3>
+              <p>Pesanan yang kamu ikuti akan tampil secara realtime di sini.</p>
               <Link href="/" className="text-link">
-                Cari PO yang buka ↗
+                Cari PO yang buka di kampus ↗
               </Link>
             </div>
           </div>

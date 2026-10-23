@@ -2,20 +2,12 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { SellerDashboardView, SellerProfile, SellerBatch, SellerProduct } from "@/components/seller-dashboard-view";
 import { SiteHeader } from "@/components/site-header";
-import { sampleSellerDemoBatches } from "@/data/admin-mock-data";
 import { createClient } from "@/lib/supabase/server";
 import { connection } from "next/server";
 
 export const metadata: Metadata = {
   title: "Ruang Penjual · OpenPO",
   description: "Dashboard penjualan mahasiswa: atur batch PO, kelola pesanan, dan konfirmasi pengambilan.",
-};
-
-const demoSellerProfile: SellerProfile = {
-  display_name: "Nadia Putri",
-  faculty: "Fakultas Pertanian",
-  whatsapp: "081234567801",
-  avatar_path: null,
 };
 
 type PageProps = {
@@ -25,7 +17,6 @@ type PageProps = {
 export default async function SellerPage({ searchParams }: PageProps) {
   await connection();
   const params = await searchParams;
-  const isDemo = params.demo === "1";
 
   let user = null;
   let seller: SellerProfile | null = null;
@@ -120,15 +111,9 @@ export default async function SellerPage({ searchParams }: PageProps) {
     // Supabase auth check error or connection issue
   }
 
-  // Jika belum login dan tidak request demo -> arahkan ke login
-  if (!user && !isDemo) {
+  // Wajib masuk akun resmi penjual
+  if (!user) {
     redirect(`/masuk?next=${encodeURIComponent("/penjual")}`);
-  }
-
-  // Jika demo mode
-  if (!user && isDemo) {
-    seller = demoSellerProfile;
-    batches = sampleSellerDemoBatches as unknown as SellerBatch[];
   }
 
   return (
@@ -139,7 +124,6 @@ export default async function SellerPage({ searchParams }: PageProps) {
           seller={seller}
           batches={batches}
           products={products}
-          isDemo={isDemo}
           newBatchId={typeof params.baru === "string" ? params.baru : undefined}
         />
       </main>

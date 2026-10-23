@@ -9,7 +9,7 @@ const waRegex = /^(\+62|62|0)8\d{7,13}$/;
 
 const orderInput = z.object({
   batchId: z.string().uuid(),
-  quantity: z.number().int().min(1).max(100),
+  quantity: z.number().int().min(1),
   buyerName: z.string().trim().min(2).max(80),
   faculty: z.string().trim().min(2).max(120),
   whatsapp: z

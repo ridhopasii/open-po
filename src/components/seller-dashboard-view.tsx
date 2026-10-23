@@ -234,27 +234,6 @@ export function SellerDashboardView({
     e.preventDefault();
     if (!newProdName.trim()) return;
 
-    if (isDemo) {
-      const newProd: SellerProduct = {
-        id: `prod-${Date.now()}`,
-        name: newProdName.trim(),
-        category: newProdCategory,
-        price_idr: Number(newProdPrice) || 10000,
-        description: newProdDesc.trim(),
-        total_batches: 0,
-        total_sold: 0,
-        status: "active",
-        photo: newProdCategory === "Minuman" ? "/images/matcha-latte.jpg" : "/images/risol-mayo.jpg",
-      };
-
-      setProducts([newProd, ...products]);
-      setShowAddProductModal(false);
-      setNewProdName("");
-      setNewProdDesc("");
-      showToast(`Barang dagangan "${newProd.name}" berhasil ditambahkan ke katalog!`);
-      return;
-    }
-
     try {
       const res = await fetch("/api/seller/products", {
         method: "POST",
@@ -296,12 +275,6 @@ export function SellerDashboardView({
 
   async function handleDeleteProduct(prodId: string, prodName: string) {
     if (!confirm(`Hapus/arsipkan barang "${prodName}" dari katalog tokomu?`)) return;
-
-    if (isDemo) {
-      setProducts((prev) => prev.filter((p) => p.id !== prodId));
-      showToast(`Barang "${prodName}" dihapus dari katalog.`);
-      return;
-    }
 
     try {
       const res = await fetch(`/api/seller/products/${prodId}`, { method: "DELETE" });
@@ -391,21 +364,6 @@ export function SellerDashboardView({
       {toastMessage && (
         <div className="seller-toast" role="alert">
           <span>✓</span> {toastMessage}
-        </div>
-      )}
-
-      {/* Demo Mode Banner */}
-      {isDemo && (
-        <div className="seller-demo-banner">
-          <div className="demo-banner-content">
-            <span className="demo-tag">Mode Demo Penjual</span>
-            <p>
-              Pratinjau interaktif Ruang Penjual: Coba kelola katalog barang dagangan, buka batch PO, salin broadcast WA, verifikasi pesanan, dan atur rekening pembayaran toko.
-            </p>
-          </div>
-          <Link href="/masuk?next=%2Fpenjual" className="button button-small">
-            Masuk / Buat Akun Toko Asli →
-          </Link>
         </div>
       )}
 
@@ -709,62 +667,19 @@ export function SellerDashboardView({
                                         {STATUS_LABELS[order.status] ?? order.status}
                                       </span>
 
-                                      {/* Action buttons (real vs demo) */}
+                                      {/* Action buttons */}
                                       <div className="order-action-list">
-                                        {isDemo ? (
-                                          <>
-                                            {order.status === "pending" && (
-                                              <button
-                                                type="button"
-                                                className="button button-small"
-                                                onClick={() => handleDemoStatusChange(order.id, "confirmed")}
-                                              >
-                                                Konfirmasi Bayar
-                                              </button>
-                                            )}
-                                            {order.status === "confirmed" && (
-                                              <button
-                                                type="button"
-                                                className="button button-small"
-                                                onClick={() => handleDemoStatusChange(order.id, "ready")}
-                                              >
-                                                Siap Diambil
-                                              </button>
-                                            )}
-                                            {order.status === "ready" && (
-                                              <button
-                                                type="button"
-                                                className="button button-small"
-                                                onClick={() => handleDemoStatusChange(order.id, "picked_up")}
-                                              >
-                                                Sudah Diterima
-                                              </button>
-                                            )}
-                                            {order.status !== "cancelled" && order.status !== "picked_up" && (
-                                              <button
-                                                type="button"
-                                                className="button button-light button-small text-danger"
-                                                onClick={() => handleDemoStatusChange(order.id, "cancelled")}
-                                              >
-                                                Batalkan
-                                              </button>
-                                            )}
-                                          </>
-                                        ) : (
-                                          <>
-                                            {order.status === "pending" && (
-                                              <OrderAction id={order.id} status="confirmed" label="Konfirmasi" />
-                                            )}
-                                            {order.status === "confirmed" && (
-                                              <OrderAction id={order.id} status="ready" label="Siap diambil" />
-                                            )}
-                                            {order.status === "ready" && (
-                                              <OrderAction id={order.id} status="picked_up" label="Sudah diambil" />
-                                            )}
-                                            {["pending", "confirmed", "ready"].includes(order.status) && (
-                                              <OrderAction id={order.id} status="cancelled" label="Batalkan" />
-                                            )}
-                                          </>
+                                        {order.status === "pending" && (
+                                          <OrderAction id={order.id} status="confirmed" label="Konfirmasi" />
+                                        )}
+                                        {order.status === "confirmed" && (
+                                          <OrderAction id={order.id} status="ready" label="Siap diambil" />
+                                        )}
+                                        {order.status === "ready" && (
+                                          <OrderAction id={order.id} status="picked_up" label="Sudah diambil" />
+                                        )}
+                                        {["pending", "confirmed", "ready"].includes(order.status) && (
+                                          <OrderAction id={order.id} status="cancelled" label="Batalkan" />
                                         )}
                                       </div>
                                     </div>

@@ -153,24 +153,6 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
             </button>
           </div>
         </div>
-
-        {next.includes("/penjual") && (
-          <div className="demo-login-shortcut">
-            <span>Ingin coba fitur penjual langsung tanpa login?</span>
-            <Link href="/penjual?demo=1" className="button button-outline button-small">
-              Buka Demo Interaktif Ruang Penjual →
-            </Link>
-          </div>
-        )}
-
-        {next.includes("/akun") && (
-          <div className="demo-login-shortcut">
-            <span>Ingin coba melihat akun pembeli langsung tanpa login?</span>
-            <Link href="/akun/pesanan?demo=1" className="button button-outline button-small">
-              Buka Demo Akun Pembeli (Bima Prakoso) →
-            </Link>
-          </div>
-        )}
       </section>
     </main>
   );

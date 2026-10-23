@@ -241,7 +241,6 @@ export function SellerForm({
             type="number"
             required
             min={1}
-            max={10000}
             value={quota}
             onChange={(e) => setQuota(e.target.value)}
           />

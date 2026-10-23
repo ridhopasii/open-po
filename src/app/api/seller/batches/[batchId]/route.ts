@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 const patchInput = z.object({
   status: z.enum(["open", "ready", "closed", "cancelled"]).optional(),
   title: z.string().trim().min(2).max(100).optional(),
-  quota: z.number().int().min(1).max(10000).optional(),
+  quota: z.number().int().min(1).optional(),
   closes_at: z.string().datetime().optional(),
   pickup_at: z.string().datetime().optional(),
   pickup_point: z.string().trim().min(2).max(160).optional(),

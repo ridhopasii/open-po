@@ -213,8 +213,8 @@ export function OrderForm({
             <button
               type="button"
               aria-label="Tambah jumlah"
-              disabled={quantity >= Math.min(remaining, 100)}
-              onClick={() => setQuantity((n) => Math.min(Math.min(remaining, 100), n + 1))}
+              disabled={quantity >= remaining}
+              onClick={() => setQuantity((n) => Math.min(remaining, n + 1))}
             >
               +
             </button>

@@ -18,7 +18,7 @@ const batchInput = z.object({
   category: z.string().trim().min(2).max(40),
   price: z.number().int().min(1000),
   title: z.string().trim().min(2).max(100),
-  quota: z.number().int().min(1).max(10000),
+  quota: z.number().int().min(1),
   closesAt: z.string().datetime(),
   pickupAt: z.string().datetime(),
   pickupPoint: z.string().trim().min(2).max(160),
