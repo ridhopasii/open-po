@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { LogoutButton } from "@/components/logout-button";
 
 function BrandMark() {
   return <span aria-hidden="true" className="brand-mark"><span /><span /><span /></span>;
@@ -23,6 +24,7 @@ export async function SiteHeader() {
   } catch {
     // Supabase belum terkonfigurasi atau tidak dapat dihubungi — tampilkan header tanpa auth state
   }
+
   return (
     <header className="site-header">
       <div className="nav-wrap">
@@ -41,17 +43,25 @@ export async function SiteHeader() {
         </nav>
         <div className="nav-actions">
           {user ? (
-            <Link className="nav-login" href="/akun/pesanan">
-              Pesananku
-            </Link>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Link className="nav-login" href="/akun/pesanan">
+                Pesananku
+              </Link>
+              <Link className="button button-small" href="/penjual">
+                Ruang Penjual
+              </Link>
+              <LogoutButton className="button button-light button-small" />
+            </div>
           ) : (
-            <Link className="nav-login" href="/masuk?next=%2Fakun%2Fpesanan">
-              Masuk
-            </Link>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Link className="nav-login" href="/masuk?next=%2Fakun%2Fpesanan">
+                Masuk
+              </Link>
+              <Link className="button button-small" href="/penjual">
+                Jual di OpenPO
+              </Link>
+            </div>
           )}
-          <Link className="button button-small" href="/penjual">
-            {user ? "Ruang Penjual" : "Jual di OpenPO"}
-          </Link>
         </div>
       </div>
       <nav className="mobile-nav" aria-label="Navigasi cepat">
@@ -67,8 +77,13 @@ export async function SiteHeader() {
         <Link href="/penjual" className="mobile-nav-link mobile-nav-sell">
           <MobileNavIcon kind="sell" />Jual
         </Link>
+        {user && (
+          <LogoutButton
+            className="mobile-nav-link"
+            iconOnly
+          />
+        )}
       </nav>
     </header>
   );
 }
-

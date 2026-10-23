@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { CancelOrder } from "@/components/cancel-order";
 import { OrderProgress } from "@/components/order-progress";
 import { SellerIdentity } from "@/components/seller-identity";
+import { LogoutButton } from "@/components/logout-button";
 import { getSellerAvatarUrl } from "@/lib/marketplace-shared";
 import { createClient } from "@/lib/supabase/server";
 import { formatCampusDate, formatRupiah } from "@/lib/marketplace";
@@ -208,11 +209,20 @@ export default async function OrdersPage({
     <div className="page-shell">
       <SiteHeader />
       <main className="account-page">
-        <span className="section-label">AKUN PEMBELI</span>
-        <h1>Pesananmu</h1>
-        <p className="account-intro">
-          Pantau konfirmasi penjual dan jadwal pengambilan di sini.
-        </p>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px", marginBottom: "16px" }}>
+          <div>
+            <span className="section-label">AKUN PEMBELI</span>
+            <h1>Pesananmu</h1>
+            <p className="account-intro">
+              {user?.email ? `Masuk sebagai ${user.email} · ` : ""}Pantau konfirmasi penjual dan jadwal pengambilan di sini.
+            </p>
+          </div>
+          {user && (
+            <LogoutButton className="button button-light button-small">
+              Keluar Akun
+            </LogoutButton>
+          )}
+        </div>
 
         {isDemo && (
           <div className="seller-demo-banner" style={{ marginBottom: "24px" }}>

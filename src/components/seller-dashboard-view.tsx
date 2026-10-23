@@ -7,6 +7,7 @@ import { OrderAction } from "@/components/order-action";
 import { SellerAvatarUpload } from "@/components/seller-avatar-upload";
 import { PrefillProduct, SellerForm } from "@/components/seller-form";
 import { SellerIdentity } from "@/components/seller-identity";
+import { LogoutButton } from "@/components/logout-button";
 import { formatCampusDate, formatRupiah, getSellerAvatarUrl } from "@/lib/marketplace-shared";
 
 export type SellerOrder = {
@@ -426,9 +427,16 @@ export function SellerDashboardView({
           />
           {!isDemo && <SellerAvatarUpload hasPhoto={Boolean(seller?.avatar_path)} />}
         </div>
-        <div className="seller-status-chip">
-          <span className="status-dot dot-green" />
-          <span>Toko Aktif Menerima PO</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+          <div className="seller-status-chip">
+            <span className="status-dot dot-green" />
+            <span>Toko Aktif Menerima PO</span>
+          </div>
+          {!isDemo && (
+            <LogoutButton className="button button-light button-small">
+              Keluar Akun
+            </LogoutButton>
+          )}
         </div>
       </div>
 
