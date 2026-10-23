@@ -21,6 +21,7 @@ Marketplace pre-order untuk mahasiswa. Penjual membuat batch dengan kuota, batas
 - Daftar/masuk dengan Supabase Auth.
 - Detail batch dan pemesanan yang mengunci kuota secara atomik.
 - Riwayat pesanan dan pembatalan pesanan tertunda.
+- Tombol logout / keluar dari akun pembeli dan penjual.
 - Dashboard penjual untuk membuat PO dan memperbarui status pesanan.
 - RLS dan RPC dengan validasi kepemilikan serta perubahan status yang dibatasi.
 
