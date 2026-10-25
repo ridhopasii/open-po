@@ -90,6 +90,16 @@ export function OrderTracker() {
   const [busy, setBusy] = useState(false);
   const [searched, setSearched] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [recentOrders, setRecentOrders] = useState<string[]>([]);
+
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem("openpo_recent_orders") || "[]");
+      if (Array.isArray(stored)) {
+        setRecentOrders(stored);
+      }
+    } catch {}
+  }, []);
 
   async function handleSearch(qText: string) {
     const term = qText.trim();
@@ -155,6 +165,28 @@ export function OrderTracker() {
             {busy ? "Mencari…" : "Lacak Sekarang"}
           </button>
         </form>
+
+        {recentOrders.length > 0 && (
+          <div className="tracker-recent-chips" style={{ marginTop: "14px", display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
+            <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-muted)" }}>
+              🕒 Pesanan Terakhir di Perangkat Ini:
+            </span>
+            {recentOrders.map((code) => (
+              <button
+                key={code}
+                type="button"
+                className="button button-small button-light"
+                style={{ minHeight: "30px", padding: "0 10px", fontSize: "11.5px", fontWeight: 700, borderRadius: "99px" }}
+                onClick={() => {
+                  setQuery(code);
+                  handleSearch(code);
+                }}
+              >
+                {code}
+              </button>
+            ))}
+          </div>
+        )}
 
         <p className="tracker-privacy-hint" style={{ marginTop: "1rem", fontSize: "0.85rem", color: "var(--muted, #64748b)" }}>
           🔒 <em>Privasi terjamin: Informasi kontak dan nama pemesan disamarkan secara otomatis demi keamanan data.</em>

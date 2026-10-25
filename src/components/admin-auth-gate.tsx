@@ -98,9 +98,6 @@ export function AdminAuthGate() {
           <Link href="/" className="text-link">
             ← Kembali ke Etalase Utama
           </Link>
-          <div className="admin-credential-hint">
-            <small>Default Passcode: <code>adminopenpo2026</code></small>
-          </div>
         </div>
       </div>
     </div>

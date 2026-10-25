@@ -37,7 +37,7 @@ export default async function SellerPage({ searchParams }: PageProps) {
         .select(
           "id,title,quota,reserved_quantity,closes_at,pickup_at,pickup_point,status," +
             "product:po_products!inner(id,name,description,category,price_idr)," +
-            "orders:po_orders(id,order_code,buyer_name,buyer_faculty,buyer_whatsapp,quantity,total_price_idr,status,created_at)",
+            "orders:po_orders(id,order_code,buyer_name,buyer_faculty,buyer_whatsapp,quantity,total_price_idr,status,notes,payment_method,payment_proof_path,created_at)",
         )
         .eq("product.seller_id", user.id)
         .order("created_at", { ascending: false });

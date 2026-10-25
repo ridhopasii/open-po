@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { formatRupiah } from "@/lib/marketplace-shared";
+import { PaymentProofUpload } from "@/components/payment-proof-upload";
 
 type BuyerDefaults = { name: string; faculty: string; whatsapp: string };
 
@@ -113,6 +114,15 @@ export function OrderForm({
       }
 
       setOrderResult(result.order);
+
+      // Simpan riwayat pesanan ke localStorage untuk kenyamanan pembeli tamu (Guest UX)
+      if (typeof window !== "undefined" && result.order?.order_code) {
+        try {
+          const recent = JSON.parse(localStorage.getItem("openpo_recent_orders") || "[]");
+          const updated = [result.order.order_code, ...recent.filter((c: string) => c !== result.order.order_code)].slice(0, 8);
+          localStorage.setItem("openpo_recent_orders", JSON.stringify(updated));
+        } catch {}
+      }
     } catch {
       setMessage("Koneksi terputus. Data pesananmu belum mendapat konfirmasi; coba kirim lagi.");
     } finally {
@@ -199,25 +209,71 @@ export function OrderForm({
         </label>
 
         <label>
-          Jumlah Pesanan
-          <div className="quantity-control">
-            <button
-              type="button"
-              aria-label="Kurangi jumlah"
-              disabled={quantity <= 1}
-              onClick={() => setQuantity((n) => Math.max(1, n - 1))}
-            >
-              −
-            </button>
-            <output aria-live="polite">{quantity}</output>
-            <button
-              type="button"
-              aria-label="Tambah jumlah"
-              disabled={quantity >= remaining}
-              onClick={() => setQuantity((n) => Math.min(remaining, n + 1))}
-            >
-              +
-            </button>
+          Jumlah Pesanan (Sisa kuota: {remaining})
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginTop: "4px" }}>
+            <div className="quantity-control">
+              <button
+                type="button"
+                aria-label="Kurangi jumlah"
+                disabled={quantity <= 1}
+                onClick={() => setQuantity((n) => Math.max(1, n - 1))}
+              >
+                −
+              </button>
+              <input
+                type="number"
+                min={1}
+                max={remaining}
+                value={quantity}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value, 10);
+                  if (isNaN(val)) setQuantity(1);
+                  else setQuantity(Math.min(remaining, Math.max(1, val)));
+                }}
+                className="quantity-input"
+                style={{
+                  width: "55px",
+                  textAlign: "center",
+                  border: "none",
+                  outline: "none",
+                  fontWeight: 700,
+                  fontSize: "14px",
+                  color: "var(--polmed-900)",
+                  background: "transparent",
+                }}
+                aria-label="Jumlah pesanan"
+              />
+              <button
+                type="button"
+                aria-label="Tambah jumlah"
+                disabled={quantity >= remaining}
+                onClick={() => setQuantity((n) => Math.min(remaining, n + 1))}
+              >
+                +
+              </button>
+            </div>
+
+            {/* Quick Pills */}
+            {remaining >= 5 && (
+              <button
+                type="button"
+                className="button button-small button-light"
+                style={{ minHeight: "36px", padding: "0 10px", fontSize: "11px", fontWeight: 700 }}
+                onClick={() => setQuantity((n) => Math.min(remaining, n + 5))}
+              >
+                +5
+              </button>
+            )}
+            {remaining >= 10 && (
+              <button
+                type="button"
+                className="button button-small button-light"
+                style={{ minHeight: "36px", padding: "0 10px", fontSize: "11px", fontWeight: 700 }}
+                onClick={() => setQuantity((n) => Math.min(remaining, n + 10))}
+              >
+                +10
+              </button>
+            )}
           </div>
         </label>
 
@@ -367,6 +423,11 @@ export function OrderForm({
                   </button>
                 </div>
               </div>
+            )}
+
+            {/* Upload Bukti Pembayaran Langsung */}
+            {paymentMethod !== "cod" && (
+              <PaymentProofUpload orderCode={orderResult.order_code} />
             )}
 
             <div className="modal-action-buttons">

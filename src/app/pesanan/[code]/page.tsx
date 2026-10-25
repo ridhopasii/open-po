@@ -132,6 +132,29 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
             </div>
           </div>
 
+          {/* Payment & Proof Upload */}
+          <div className="order-confirm-card">
+            <div className="order-confirm-section-title">Status Pembayaran &amp; Bukti Transfer</div>
+            <div className="order-confirm-rows">
+              <div className="order-confirm-row">
+                <span>Metode Pembayaran</span>
+                <span style={{ fontWeight: 750, textTransform: "uppercase" }}>
+                  {order.payment_method || "QRIS / Transfer"}
+                </span>
+              </div>
+              {order.notes && (
+                <div className="order-confirm-row">
+                  <span>Catatan Khusus</span>
+                  <span style={{ color: "var(--polmed-900)", fontWeight: 600 }}>{order.notes}</span>
+                </div>
+              )}
+            </div>
+            <PaymentProofUpload
+              orderCode={order.order_code}
+              initialProofPath={order.payment_proof_path}
+            />
+          </div>
+
           {/* Pickup info */}
           <div className="order-confirm-card">
             <div className="order-confirm-section-title">Jadwal Pengambilan</div>

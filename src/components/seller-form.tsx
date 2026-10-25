@@ -21,13 +21,23 @@ export type PrefillProduct = {
   description?: string;
 };
 
+export type CatalogProductOption = {
+  id: string;
+  name: string;
+  category: string;
+  price_idr: number;
+  description: string;
+};
+
 export function SellerForm({
   seller,
   prefillProduct,
+  catalogProducts,
   onBatchCreated,
 }: {
   seller?: SellerDefaults | null;
   prefillProduct?: PrefillProduct | null;
+  catalogProducts?: CatalogProductOption[];
   onBatchCreated?: (batchId: string) => void;
 }) {
   const router = useRouter();
@@ -178,6 +188,34 @@ export function SellerForm({
           <small>Informasi yang akan tampil di etalase pembeli se-kampus.</small>
         </div>
       </div>
+
+      {catalogProducts && catalogProducts.length > 0 && (
+        <div style={{ background: "var(--polmed-50)", padding: "12px 14px", borderRadius: "8px", border: "1px solid var(--polmed-100)", marginBottom: "12px" }}>
+          <label style={{ fontWeight: 700, color: "var(--polmed-900)", display: "grid", gap: "6px" }}>
+            📦 Pilih dari Katalog Barangmu (Isi Otomatis)
+            <select
+              onChange={(e) => {
+                const prod = catalogProducts.find((p) => p.id === e.target.value);
+                if (prod) {
+                  setProductName(prod.name);
+                  setCategory(prod.category);
+                  setPrice(String(prod.price_idr));
+                  setDescription(prod.description || "");
+                }
+              }}
+              defaultValue=""
+              style={{ background: "#ffffff", borderColor: "var(--polmed-100)" }}
+            >
+              <option value="" disabled>-- Pilih produk yang pernah kamu buat --</option>
+              {catalogProducts.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name} ({p.category} · Rp {p.price_idr.toLocaleString("id-ID")})
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      )}
 
       <label>
         Nama Produk Jualan

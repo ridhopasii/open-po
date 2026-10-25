@@ -19,6 +19,9 @@ export type SellerOrder = {
   quantity: number;
   total_price_idr: number;
   status: string;
+  notes?: string | null;
+  payment_method?: string | null;
+  payment_proof_path?: string | null;
   created_at: string;
 };
 
@@ -166,6 +169,40 @@ export function SellerDashboardView({
 
   // Broadcast Hub state
   const [broadcastBatchId, setBroadcastBatchId] = useState<string>(batches[0]?.id || "");
+  const [orderSearches, setOrderSearches] = useState<Record<string, string>>({});
+  const [bulkBusy, setBulkBusy] = useState<Record<string, boolean>>({});
+
+  async function handleBulkMarkReady(batchId: string, orderIds: string[]) {
+    if (!orderIds.length) return;
+    setBulkBusy((prev) => ({ ...prev, [batchId]: true }));
+    try {
+      const res = await fetch("/api/seller/orders/bulk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderIds, status: "ready" }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        showToast(data.error || "Gagal memperbarui status.");
+      } else {
+        showToast(`⚡ ${orderIds.length} pesanan berhasil ditandai Siap Diambil!`);
+        setBatches((prev) =>
+          prev.map((b) => {
+            if (b.id !== batchId) return b;
+            return {
+              ...b,
+              orders: b.orders.map((o) => (orderIds.includes(o.id) ? { ...o, status: "ready" } : o)),
+            };
+          })
+        );
+      }
+    } catch {
+      showToast("Koneksi terganggu. Gagal memperbarui status.");
+    } finally {
+      setBulkBusy((prev) => ({ ...prev, [batchId]: false }));
+    }
+  }
+
   const selectedBroadcastBatch = useMemo(() => {
     return batches.find((b) => b.id === broadcastBatchId) || batches[0] || null;
   }, [batches, broadcastBatchId]);
@@ -617,6 +654,32 @@ export function SellerDashboardView({
                     {/* Orders Table */}
                     {batch.orders?.length ? (
                       <div className="order-table-wrap">
+                        {/* Table Controls: Search & Bulk Action */}
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "10px", flexWrap: "wrap", padding: "10px 0" }}>
+                          <input
+                            type="text"
+                            placeholder="🔍 Cari nama atau kode pesanan..."
+                            value={orderSearches[batch.id] || ""}
+                            onChange={(e) => setOrderSearches((prev) => ({ ...prev, [batch.id]: e.target.value }))}
+                            style={{ maxWidth: "260px", padding: "6px 12px", fontSize: "12px", border: "1px solid var(--border-ui)", borderRadius: "6px" }}
+                          />
+
+                          {batch.orders.some((o) => o.status === "confirmed") && (
+                            <button
+                              type="button"
+                              className="button button-small button-primary-action"
+                              disabled={bulkBusy[batch.id]}
+                              onClick={() => {
+                                const confirmedIds = batch.orders.filter((o) => o.status === "confirmed").map((o) => o.id);
+                                handleBulkMarkReady(batch.id, confirmedIds);
+                              }}
+                              style={{ minHeight: "34px", padding: "0 12px", fontSize: "11.5px", fontWeight: 700 }}
+                            >
+                              {bulkBusy[batch.id] ? "Memproses..." : "⚡ Tandai Semua Siap Diambil"}
+                            </button>
+                          )}
+                        </div>
+
                         <table className="order-table">
                           <thead>
                             <tr>
@@ -627,7 +690,17 @@ export function SellerDashboardView({
                             </tr>
                           </thead>
                           <tbody>
-                            {batch.orders.map((order) => {
+                            {batch.orders
+                              .filter((order) => {
+                                const q = (orderSearches[batch.id] || "").toLowerCase().trim();
+                                if (!q) return true;
+                                return (
+                                  order.buyer_name.toLowerCase().includes(q) ||
+                                  order.order_code.toLowerCase().includes(q) ||
+                                  order.buyer_whatsapp.includes(q)
+                                );
+                              })
+                              .map((order) => {
                               const waClean = whatsappDigits(order.buyer_whatsapp);
                               const waMessage = encodeURIComponent(
                                 `Halo kak ${order.buyer_name}! Pesanan Open PO "${batch.product.name}" (Kode: ${order.order_code}) sudah ${
@@ -652,6 +725,33 @@ export function SellerDashboardView({
                                       </a>
                                     </small>
                                     <small className="order-code-text">Kode: {order.order_code}</small>
+
+                                    {/* Payment Method Badge & Proof */}
+                                    <div style={{ marginTop: "4px", display: "flex", gap: "6px", alignItems: "center", flexWrap: "wrap" }}>
+                                      {order.payment_method && (
+                                        <span style={{ fontSize: "10.5px", fontWeight: 750, padding: "2px 6px", borderRadius: "4px", background: order.payment_method === "qris" ? "var(--usu-100)" : "#f1f5f9", color: order.payment_method === "qris" ? "var(--usu-900)" : "#334155" }}>
+                                          💳 {order.payment_method.toUpperCase()}
+                                        </span>
+                                      )}
+                                      {order.payment_proof_path && (
+                                        <a
+                                          href={order.payment_proof_path}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                          className="button button-small button-light"
+                                          style={{ minHeight: "22px", padding: "1px 7px", fontSize: "10.5px", fontWeight: 700 }}
+                                        >
+                                          🧾 Bukti Bayar
+                                        </a>
+                                      )}
+                                    </div>
+
+                                    {/* Buyer Notes */}
+                                    {order.notes && (
+                                      <div style={{ marginTop: "6px", padding: "4px 8px", borderRadius: "5px", background: "#fef9c3", border: "1px solid #fef08a", color: "#854d0e", fontSize: "11px", fontWeight: 600 }}>
+                                        📝 {order.notes}
+                                      </div>
+                                    )}
                                   </td>
                                   <td>
                                     <strong>{order.quantity}</strong> item
@@ -1184,6 +1284,7 @@ export function SellerDashboardView({
           <SellerForm
             seller={seller}
             prefillProduct={prefillProduct}
+            catalogProducts={products}
             onBatchCreated={(id) => {
               showToast("PO berhasil diterbitkan ke etalase kampus!");
               setMainTab("batches");

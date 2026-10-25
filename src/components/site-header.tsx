@@ -27,6 +27,15 @@ export async function SiteHeader() {
 
   return (
     <header className="site-header">
+      {/* Universal Ecosystem Top Ribbon: USU x POLMED */}
+      <div className="ecosystem-top-ribbon">
+        <a href="https://jualbeliusupolmed.web.id" target="_blank" rel="noopener noreferrer">
+          <span>🛍️ ← Ke Pasar Barang Bekas &amp; Menfess USU-Polmed</span>
+        </a>
+        <span className="divider-dot" aria-hidden="true" />
+        <span style={{ opacity: 0.95 }}>🍵 Open PO Kampus (Aktif)</span>
+      </div>
+
       <div className="nav-wrap">
         <Link href="/" className="brand" aria-label="OpenPO by kampusfess.id, beranda">
           <BrandMark />
