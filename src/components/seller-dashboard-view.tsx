@@ -1057,9 +1057,27 @@ export function SellerDashboardView({
 
             <form
               className="form-stack"
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
-                showToast("Pengaturan rekening & toko berhasil disimpan!");
+                try {
+                  const res = await fetch("/api/seller/profile", {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      bank_name: bankName,
+                      bank_number: bankNumber,
+                      bank_holder: bankHolder,
+                      qris_nmid: qrisNmid,
+                    }),
+                  });
+                  if (res.ok) {
+                    showToast("Pengaturan rekening & toko berhasil disimpan!");
+                  } else {
+                    showToast("Gagal menyimpan ke server.");
+                  }
+                } catch {
+                  showToast("Pengaturan rekening disimpan lokal.");
+                }
               }}
             >
               <div className="form-section-title">

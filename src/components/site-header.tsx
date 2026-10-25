@@ -39,7 +39,6 @@ export async function SiteHeader() {
           <Link href="/">Jelajah PO</Link>
           <Link href="/lacak" className="nav-highlight">Lacak Pesanan</Link>
           <Link href="/cara-kerja">Cara Kerja</Link>
-          <Link href="/admin">Panel Admin</Link>
         </nav>
         <div className="nav-actions">
           {user ? (

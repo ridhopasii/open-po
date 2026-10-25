@@ -147,21 +147,8 @@ export function MarketHome({ batches }: { batches: OpenBatch[] }) {
   const [category, setCategory] = useState("Semua");
   const [sortBy, setSortBy] = useState<"closing" | "popular" | "price_asc" | "price_desc">("closing");
 
-  const samplesVisible = batches.length === 0;
+  const samplesVisible = false;
   const needle = query.trim().toLocaleLowerCase("id-ID");
-
-  const filteredSamples = useMemo(
-    () =>
-      sampleListings.filter(
-        (item) =>
-          (category === "Semua" || item.category === category) &&
-          (!needle ||
-            `${item.name} ${item.category} ${item.note}`
-              .toLocaleLowerCase("id-ID")
-              .includes(needle)),
-      ),
-    [category, needle],
-  );
 
   const filteredBatches = useMemo(() => {
     const list = batches.filter(
@@ -190,7 +177,7 @@ export function MarketHome({ batches }: { batches: OpenBatch[] }) {
     });
   }, [batches, category, needle, sortBy]);
 
-  const itemCount = samplesVisible ? filteredSamples.length : filteredBatches.length;
+  const itemCount = filteredBatches.length;
 
   return (
     <>
@@ -346,14 +333,21 @@ export function MarketHome({ batches }: { batches: OpenBatch[] }) {
 
         {itemCount > 0 ? (
           <section className="shop-grid" aria-label="Daftar barang">
-            {samplesVisible
-              ? filteredSamples.map((item, index) => (
-                  <SampleCard item={item} index={index} key={item.name} />
-                ))
-              : filteredBatches.map((batch) => (
-                  <LiveCard batch={batch} key={batch.id} />
-                ))}
+            {filteredBatches.map((batch) => (
+              <LiveCard batch={batch} key={batch.id} />
+            ))}
           </section>
+        ) : batches.length === 0 ? (
+          <div className="shop-no-results">
+            <div className="no-results-icon" aria-hidden="true">
+              🍵
+            </div>
+            <h2>Belum ada Batch PO yang Sedang Dibuka</h2>
+            <p>Jadilah yang pertama membuka pesanan makanan, minuman, kaos angkatan, atau jastip kampus!</p>
+            <Link href="/penjual" className="button button-primary button-small" style={{ marginTop: "14px", display: "inline-block" }}>
+              + Buka PO Sendiri
+            </Link>
+          </div>
         ) : (
           <div className="shop-no-results">
             <div className="no-results-icon" aria-hidden="true">
@@ -361,18 +355,16 @@ export function MarketHome({ batches }: { batches: OpenBatch[] }) {
             </div>
             <h2>Barangnya belum ketemu</h2>
             <p>Coba kata kunci lain atau pilih kategori &ldquo;Semua&rdquo;.</p>
-            {(query || category !== "Semua") && (
-              <button
-                type="button"
-                className="button button-light button-small"
-                onClick={() => {
-                  setQuery("");
-                  setCategory("Semua");
-                }}
-              >
-                Reset Filter
-              </button>
-            )}
+            <button
+              type="button"
+              className="button button-light button-small"
+              onClick={() => {
+                setQuery("");
+                setCategory("Semua");
+              }}
+            >
+              Reset Filter
+            </button>
           </div>
         )}
       </main>

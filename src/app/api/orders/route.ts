@@ -72,6 +72,7 @@ export async function POST(request: Request) {
 
   const batch = rawBatch as unknown as BatchQueryResult | null;
 
+  // 1. Validasi status dan ketersediaan kuota awal
   if (bErr || !batch) {
     return NextResponse.json({ error: "Batch PO tidak ditemukan." }, { status: 404 });
   }
@@ -82,6 +83,36 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Kuota tersisa tidak mencukupi untuk jumlah tersebut." }, { status: 400 });
   }
 
+  // 2. Cek idempotency: jika requestId sama sudah pernah dipesan, kembalikan pesanan yang sama
+  const { data: existingOrder } = await admin
+    .from("po_orders")
+    .select("id,order_code,quantity,unit_price_idr,total_price_idr,status,payment_method,notes")
+    .eq("client_request_id", requestId)
+    .maybeSingle();
+
+  if (existingOrder) {
+    return NextResponse.json({ order: existingOrder }, { status: 200 });
+  }
+
+  // 3. Kunci kuota secara atomik: hanya berhasil jika sisa kuota masih memenuhi syarat
+  const newReserved = batch.reserved_quantity + quantity;
+  const { data: updatedBatch, error: updateErr } = await admin
+    .from("po_batches")
+    .update({
+      reserved_quantity: newReserved,
+      status: newReserved >= batch.quota ? "closed" : batch.status,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", batch.id)
+    .lte("reserved_quantity", batch.quota - quantity)
+    .select("id,reserved_quantity,quota")
+    .single();
+
+  if (updateErr || !updatedBatch) {
+    return NextResponse.json({ error: "Mohon maaf, kuota PO baru saja terisi penuh oleh pemesan lain." }, { status: 400 });
+  }
+
+  // 4. Buat record pesanan
   const price = batch.product?.price_idr || 0;
   const orderCode = `PO-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
 
@@ -105,18 +136,16 @@ export async function POST(request: Request) {
     .single();
 
   if (oErr || !newOrder) {
+    // Rollback kuota jika pembuatan order gagal
+    await admin
+      .from("po_batches")
+      .update({
+        reserved_quantity: batch.reserved_quantity,
+        status: batch.status,
+      })
+      .eq("id", batch.id);
     return NextResponse.json({ error: oErr?.message || "Gagal menyimpan pesanan." }, { status: 500 });
   }
-
-  const newReserved = batch.reserved_quantity + quantity;
-  await admin
-    .from("po_batches")
-    .update({
-      reserved_quantity: newReserved,
-      status: newReserved >= batch.quota ? "closed" : batch.status,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", batch.id);
 
   return NextResponse.json({ order: newOrder }, { status: 201 });
 }

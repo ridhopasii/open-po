@@ -17,10 +17,10 @@ export async function GET() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Sesi masuk sudah berakhir." }, { status: 401 });
 
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from("po_products")
     .select(
-      "id,name,description,category,price_idr,photo_path,status," +
+      "id,name,description,category,price_idr,active," +
       "batches:po_batches(id,status,reserved_quantity)"
     )
     .eq("seller_id", user.id)
@@ -72,20 +72,40 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Profil penjual belum dibuat. Lengkapi data penjual terlebih dahulu." }, { status: 400 });
   }
 
+  // Insert product dengan kolom yang kompatibel (active: boolean)
+  const insertPayload: Record<string, any> = {
+    seller_id: user.id,
+    name,
+    description: description || "",
+    category: category || "Lainnya",
+    price_idr,
+    active: true,
+  };
+
+  if (photo_path) {
+    insertPayload.photo_path = photo_path;
+  }
+
   const { data, error } = await supabase
     .from("po_products")
-    .insert({
-      seller_id: user.id,
-      name,
-      description,
-      category,
-      price_idr,
-      photo_path: photo_path || null,
-      status: "active",
-    })
-    .select("id,name,category,price_idr,photo_path")
+    .insert(insertPayload)
+    .select("id,name,category,price_idr")
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 409 });
+  if (error) {
+    // Jika kolom photo_path belum ditambahkan via migrasi, coba insert tanpa photo_path
+    if (error.message?.includes("photo_path")) {
+      delete insertPayload.photo_path;
+      const { data: retryData, error: retryErr } = await supabase
+        .from("po_products")
+        .insert(insertPayload)
+        .select("id,name,category,price_idr")
+        .single();
+      if (retryErr) return NextResponse.json({ error: retryErr.message }, { status: 409 });
+      return NextResponse.json({ ok: true, product: retryData }, { status: 201 });
+    }
+    return NextResponse.json({ error: error.message }, { status: 409 });
+  }
+
   return NextResponse.json({ ok: true, product: data }, { status: 201 });
 }

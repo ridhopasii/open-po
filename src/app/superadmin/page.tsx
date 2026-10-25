@@ -71,7 +71,7 @@ export default async function SuperadminPage() {
 
   const cookieStore = await cookies();
   const adminCookie = cookieStore.get("openpo_admin_token");
-  if (!adminCookie?.value) {
+  if (adminCookie?.value !== "admin_authenticated_session") {
     redirect("/admin");
   }
 

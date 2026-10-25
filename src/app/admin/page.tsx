@@ -28,7 +28,7 @@ export default async function AdminPage() {
   // 🔒 Keamanan: Cek cookie sesi admin atau login user admin
   const cookieStore = await cookies();
   const adminCookie = cookieStore.get("openpo_admin_token");
-  let isAuthenticated = Boolean(adminCookie?.value);
+  let isAuthenticated = adminCookie?.value === "admin_authenticated_session";
 
   if (!isAuthenticated) {
     try {
@@ -53,10 +53,10 @@ export default async function AdminPage() {
     );
   }
 
-  // Jika sudah terverifikasi -> muat data nyata
-  let batches: AdminBatch[] = sampleAdminBatches;
-  let sellers: AdminSeller[] = sampleAdminSellers;
-  let orders: AdminOrder[] = sampleAdminOrders;
+  // Jika sudah terverifikasi -> muat data nyata (tanpa data tiruan)
+  let batches: AdminBatch[] = [];
+  let sellers: AdminSeller[] = [];
+  let orders: AdminOrder[] = [];
 
   try {
     const supabase = createAdminClient() || (await createClient());
