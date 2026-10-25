@@ -134,21 +134,21 @@ export default async function CaraKerjaPage() {
               <div className="mockup-content">
                 <div className="mockup-card">
                   <span className="mockup-tag">🍵 Minuman</span>
-                  <strong>Matcha Latte Kampus</strong>
-                  <small>Rp 18.000 · 34/50 terpesan</small>
-                  <div className="mockup-bar"><div style={{ width: "68%" }} /></div>
+                  <strong>Cold Brew Matcha Latte</strong>
+                  <small>Rp 18.000 · 6/20 terpesan</small>
+                  <div className="mockup-bar"><div style={{ width: "30%" }} /></div>
                 </div>
                 <div className="mockup-card">
                   <span className="mockup-tag">👕 Merchandise</span>
-                  <strong>Kaos Angkatan 2024</strong>
-                  <small>Rp 95.000 · 61/80 terpesan</small>
-                  <div className="mockup-bar"><div style={{ width: "76%" }} /></div>
+                  <strong>Kaos Acara Angkatan</strong>
+                  <small>Rp 85.000 · 36/50 terpesan</small>
+                  <div className="mockup-bar"><div style={{ width: "72%" }} /></div>
                 </div>
                 <div className="mockup-card">
                   <span className="mockup-tag">🥐 Makanan</span>
-                  <strong>Risol Mayo Crispy</strong>
-                  <small>Rp 8.000 · 22/40 terpesan</small>
-                  <div className="mockup-bar"><div style={{ width: "55%" }} /></div>
+                  <strong>Risol Mayo Hangat</strong>
+                  <small>Rp 12.000 · 17/30 terpesan</small>
+                  <div className="mockup-bar"><div style={{ width: "57%" }} /></div>
                 </div>
               </div>
             </div>

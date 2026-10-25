@@ -138,7 +138,7 @@ export function OrderTracker() {
         <span className="section-label">LIVE TRACKING KAMPUS · TANPA LOGIN</span>
         <h1>Lacak Status Pesanan PO</h1>
         <p>
-          <strong>Tidak perlu repot buat akun!</strong> Cukup masukkan <strong>Kode Pesanan</strong> (contoh: <code>PO-93DZHZJH</code>) atau <strong>Nomor WhatsApp</strong> yang kamu pakai saat memesan untuk cek perkembangan pesananmu realtime.
+          <strong>Tidak perlu repot buat akun!</strong> Cukup masukkan <strong>Kode Pesanan</strong> (format: <code>PO-XXXXXX</code>) atau <strong>Nomor WhatsApp</strong> yang kamu pakai saat memesan untuk cek perkembangan pesananmu realtime.
         </p>
 
         <form
@@ -157,7 +157,7 @@ export function OrderTracker() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Masukkan Kode Pesanan (misal: PO-93DZHZJH) atau No. WA"
+              placeholder="Masukkan Kode Pesanan (contoh: PO-XXXXXX) atau No. WA"
               required
             />
           </div>

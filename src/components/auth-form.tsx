@@ -138,19 +138,6 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
               <strong className="preset-name">Bima Prakoso (Fasilkom)</strong>
               <small className="preset-desc">Pantau pesanan & lacak status</small>
             </button>
-
-            <button
-              type="button"
-              className="preset-btn"
-              onClick={() => {
-                setEmail("admin@openpo.id");
-                setPassword("AdminOpenPO2026!");
-              }}
-            >
-              <div className="preset-badge admin">Superadmin 🛡️</div>
-              <strong className="preset-name">Admin Kampus Pusat</strong>
-              <small className="preset-desc">Moderasi PO & verifikasi penjual</small>
-            </button>
           </div>
         </div>
       </section>

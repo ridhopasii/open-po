@@ -6,7 +6,7 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));
   const { passcode, email, password } = body;
 
-  const validMasterPasscode = process.env.ADMIN_PASSWORD || "adminopenpo2026";
+  const validMasterPasscode = process.env.ADMIN_PASSWORD || "PolmedUSU2026AdminSecure!X9";
   const adminEmail = process.env.ADMIN_EMAIL || "admin@openpo.id";
 
   let isAuthorized = false;

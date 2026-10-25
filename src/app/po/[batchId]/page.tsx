@@ -126,7 +126,7 @@ export default async function OrderPage({ params }: PageProps) {
             )}
 
             <div className="detail-category-header">
-              <span className="section-label">{batch.product.category.toUpperCase()} · OPEN PO RESMI</span>
+              <span className="section-label">{batch.product.category.toUpperCase()} · OPEN PO MAHASISWA</span>
               <span className="quota-tag-chip">{percentBooked}% Kuota Terisi</span>
             </div>
 
@@ -138,7 +138,20 @@ export default async function OrderPage({ params }: PageProps) {
                 faculty={batch.product.seller.faculty}
                 avatarUrl={getSellerAvatarUrl(batch.product.seller.avatar_path)}
               />
-              <span className="verified-campus-badge">✓ Mitra Mahasiswa Terverifikasi</span>
+              <div className="detail-seller-actions" style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap", marginTop: "4px" }}>
+                <span className="verified-campus-badge">✓ Mitra Mahasiswa Terverifikasi</span>
+                {sellerWhatsapp && (
+                  <a
+                    href={`https://wa.me/${sellerWhatsapp.replace(/\D/g, "").replace(/^0/, "62")}?text=${encodeURIComponent(`Halo kak ${batch.product.seller.display_name}, saya mau tanya info PO ${batch.product.name} di OpenPO`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="button button-small button-outline"
+                    style={{ minHeight: "32px", padding: "0 12px", fontSize: "12px", display: "inline-flex", alignItems: "center", gap: "6px" }}
+                  >
+                    <span>💬 Tanya Penjual di WA</span>
+                  </a>
+                )}
+              </div>
             </div>
 
             <p className="detail-description">
@@ -179,6 +192,18 @@ export default async function OrderPage({ params }: PageProps) {
                 <p>{batch.pickup_note}</p>
               </div>
             )}
+
+            {/* Kebijakan Pembatalan & Refund */}
+            <div className="detail-policy-card" style={{ marginTop: "16px", padding: "16px", background: "var(--usu-50, #ECFDF5)", border: "1px solid var(--usu-200, #A7F3D0)", borderRadius: "14px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--usu-900, #064E3B)", fontWeight: 700, fontSize: "14px" }}>
+                <span>🛡️ Kebijakan Pembatalan &amp; Pengembalian Dana (Refund)</span>
+              </div>
+              <ul style={{ margin: "8px 0 0 16px", padding: 0, fontSize: "12.5px", color: "var(--usu-800, #065F46)", lineHeight: "1.6" }}>
+                <li><strong>Jaminan 100% Refund:</strong> Jika batch PO tidak memenuhi kuota minimum, dibatalkan penjual, atau barang gagal diproduksi, dana yang telah ditransfer dikembalikan utuh 100%.</li>
+                <li><strong>Pembatalan oleh Pembeli:</strong> Pembeli dapat membatalkan pesanan sebelum batas waktu batch PO ditutup dengan menghubungi penjual via WhatsApp.</li>
+                <li><strong>Penyelesaian Kendala:</strong> Tim moderasi komunitas siap membantu mediasi jika ada ketidaksesuaian barang saat serah terima di kampus.</li>
+              </ul>
+            </div>
 
             <div className="order-expectation">
               <strong>Jaminan Transaksi Mahasiswa:</strong>

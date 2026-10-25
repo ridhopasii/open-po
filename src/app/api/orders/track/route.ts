@@ -52,15 +52,14 @@ export async function GET(request: Request) {
     .order("created_at", { ascending: false })
     .limit(10);
 
-  // If search query is predominantly digits, treat as WhatsApp search (requires >= 8 digits to prevent wide scraping)
-  if (phoneDigits.length >= 8) {
-    // Match against full or tail of whatsapp
-    query = query.ilike("buyer_whatsapp", `%${phoneDigits.slice(-8)}%`);
-  } else if (cleanQuery.startsWith("PO-") || cleanQuery.length >= 5) {
-    query = query.ilike("order_code", `%${cleanQuery}%`);
+  // If search query is predominantly digits, treat as WhatsApp search (requires >= 10 digits to prevent broad scraping)
+  if (phoneDigits.length >= 10) {
+    query = query.ilike("buyer_whatsapp", `%${phoneDigits.slice(-9)}%`);
+  } else if (cleanQuery.startsWith("PO-") && cleanQuery.length >= 7) {
+    query = query.eq("order_code", cleanQuery);
   } else {
     return NextResponse.json(
-      { error: "Untuk pencarian nomor WA, gunakan minimal 8 digit nomor ponsel." },
+      { error: "Gunakan kode pesanan lengkap (contoh: PO-XXXXXX) atau minimal 10 digit nomor WhatsApp." },
       { status: 400 }
     );
   }
