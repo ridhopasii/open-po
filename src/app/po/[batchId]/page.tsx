@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { DemoOrderCard } from "@/components/demo-order-card";
 import { OrderForm } from "@/components/order-form";
 import { SiteHeader } from "@/components/site-header";
 import { SellerIdentity } from "@/components/seller-identity";
@@ -51,7 +50,11 @@ export default async function OrderPage({ params }: PageProps) {
 
   let user = null;
   let previousOrder = null;
-  let sellerWhatsapp = "081234567801";
+  let sellerWhatsapp = "";
+  let sellerBankName: string | null = null;
+  let sellerBankNumber: string | null = null;
+  let sellerBankHolder: string | null = null;
+  let sellerQrisNmid: string | null = null;
 
   try {
     const supabase = await createClient();
@@ -68,16 +71,20 @@ export default async function OrderPage({ params }: PageProps) {
       previousOrder = prev;
     }
 
-    // Ambil WhatsApp penjual via Admin Client
+    // Ambil WhatsApp & Rekening penjual via Admin Client
     const admin = createAdminClient();
     if (admin) {
       const { data: bData } = await admin
         .from("po_batches")
-        .select("product:po_products!inner(seller:po_sellers!inner(whatsapp))")
+        .select("product:po_products!inner(seller:po_sellers!inner(whatsapp,bank_name,bank_number,bank_holder,qris_nmid))")
         .eq("id", batch.id)
         .maybeSingle();
-      const sWa = (bData as any)?.product?.seller?.whatsapp;
-      if (sWa) sellerWhatsapp = sWa;
+      const sInfo = (bData as any)?.product?.seller;
+      if (sInfo?.whatsapp) sellerWhatsapp = sInfo.whatsapp;
+      if (sInfo?.bank_name) sellerBankName = sInfo.bank_name;
+      if (sInfo?.bank_number) sellerBankNumber = sInfo.bank_number;
+      if (sInfo?.bank_holder) sellerBankHolder = sInfo.bank_holder;
+      if (sInfo?.qris_nmid) sellerQrisNmid = sInfo.qris_nmid;
     }
   } catch {
     // Supabase belum terkonfigurasi atau guest mode
@@ -111,7 +118,6 @@ export default async function OrderPage({ params }: PageProps) {
                   priority
                   className="object-cover"
                 />
-                {batch.is_sample && <span className="demo-tag">Contoh PO</span>}
                 <div className="detail-photo-badge">
                   <span>Batch Aktif</span>
                   <strong>{batch.reserved_quantity} / {batch.quota} Terpesan</strong>
@@ -186,38 +192,34 @@ export default async function OrderPage({ params }: PageProps) {
           <aside className="order-card-aside">
             <div className="order-card-header">
               <span className="section-label">FORMULIR PEMESANAN</span>
-              <h2>{batch.is_sample ? "Simulasi Pemesanan" : "Formulir Pre-Order"}</h2>
+              <h2>Formulir Pre-Order</h2>
               <small>Lengkapi data untuk mengunci kuota pesananmu</small>
             </div>
 
-            {batch.is_sample ? (
-              <DemoOrderCard
-                batchName={batch.product.name}
-                price={batch.product.price_idr}
-                remaining={remaining}
-              />
-            ) : (
-              <OrderForm
-                batchId={batch.id}
-                batchTitle={batch.product.name}
-                price={batch.product.price_idr}
-                remaining={remaining}
-                pickupPoint={batch.pickup_point}
-                sellerName={batch.product.seller.display_name}
-                sellerFaculty={batch.product.seller.faculty}
-                sellerWhatsapp={sellerWhatsapp}
-                isLoggedIn={Boolean(user)}
-                buyer={
-                  previousOrder
-                    ? {
-                        name: previousOrder.buyer_name,
-                        faculty: previousOrder.buyer_faculty,
-                        whatsapp: previousOrder.buyer_whatsapp,
-                      }
-                    : undefined
-                }
-              />
-            )}
+            <OrderForm
+              batchId={batch.id}
+              batchTitle={batch.product.name}
+              price={batch.product.price_idr}
+              remaining={remaining}
+              pickupPoint={batch.pickup_point}
+              sellerName={batch.product.seller.display_name}
+              sellerFaculty={batch.product.seller.faculty}
+              sellerWhatsapp={sellerWhatsapp}
+              sellerBankName={sellerBankName}
+              sellerBankNumber={sellerBankNumber}
+              sellerBankHolder={sellerBankHolder}
+              sellerQrisNmid={sellerQrisNmid}
+              isLoggedIn={Boolean(user)}
+              buyer={
+                previousOrder
+                  ? {
+                      name: previousOrder.buyer_name,
+                      faculty: previousOrder.buyer_faculty,
+                      whatsapp: previousOrder.buyer_whatsapp,
+                    }
+                  : undefined
+              }
+            />
           </aside>
         </div>
       </main>

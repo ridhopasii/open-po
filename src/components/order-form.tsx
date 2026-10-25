@@ -33,6 +33,10 @@ export function OrderForm({
   sellerName,
   sellerFaculty,
   sellerWhatsapp,
+  sellerBankName,
+  sellerBankNumber,
+  sellerBankHolder,
+  sellerQrisNmid,
   isLoggedIn = false,
   buyer = { name: "", faculty: "", whatsapp: "" },
 }: {
@@ -44,6 +48,10 @@ export function OrderForm({
   sellerName?: string;
   sellerFaculty?: string;
   sellerWhatsapp?: string;
+  sellerBankName?: string | null;
+  sellerBankNumber?: string | null;
+  sellerBankHolder?: string | null;
+  sellerQrisNmid?: string | null;
   isLoggedIn?: boolean;
   buyer?: BuyerDefaults;
 }) {
@@ -131,7 +139,12 @@ export function OrderForm({
   }
 
   const totalPrice = price * quantity;
-  const sellerWaClean = sanitizeWa(sellerWhatsapp || "081234567801");
+  const sellerWaClean = sanitizeWa(sellerWhatsapp || "");
+  const activeBankName = sellerBankName || "Rekening Penjual (Konfirmasi via WA)";
+  const activeBankNumber = sellerBankNumber || "Hubungi WA Penjual";
+  const activeBankHolder = sellerBankHolder || sellerName || "Mitra Penjual OpenPO";
+  const activeQrisNmid = sellerQrisNmid || "Konfirmasi QRIS ke WA Penjual";
+
   const waConfirmUrl = orderResult
     ? `https://wa.me/${sellerWaClean}?text=${encodeURIComponent(
         `Halo kak ${sellerName || "Penjual"}! Saya ${buyerName} (${faculty}) sudah melakukan pemesanan via OpenPO:\n\n` +
@@ -180,7 +193,7 @@ export function OrderForm({
             minLength={2}
             maxLength={120}
             autoComplete="organization-title"
-            placeholder="Contoh: Fasilkom 2023 / FMIPA"
+            placeholder="Contoh: Fasilkom 2023 / Teknik Sipil Polmed"
             value={faculty}
             onChange={(e) => setFaculty(e.target.value)}
           />
@@ -307,7 +320,7 @@ export function OrderForm({
             >
               <span className="pay-badge">Transfer</span>
               <strong>Transfer Bank</strong>
-              <small>BCA / Bank Mandiri</small>
+              <small>{sellerBankName || "Rekening Penjual"}</small>
             </button>
             <button
               type="button"
@@ -386,41 +399,40 @@ export function OrderForm({
             {/* Payment Details */}
             {paymentMethod === "qris" && (
               <div className="modal-pay-instruction">
-                <h4>Scan QRIS Kampus</h4>
+                <h4>Instruksi Pembayaran QRIS</h4>
                 <div className="dummy-qris-box">
                   <div className="qris-head">
-                    <span className="qris-brand">QRIS</span>
-                    <small>NMID: ID102026OPENPO01</small>
-                  </div>
-                  <div className="qris-code-visual">
-                    <svg width="140" height="140" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14 3h2v3h-2v-3zm0-5h2v3h-2v-3zm-4 0h3v2h-3v-2zm0 4h2v4h-2v-4zm-4-4h2v2h-2v-2zm2 3h2v3h-2v-3z" />
-                    </svg>
+                    <span className="qris-brand">QRIS PENJUAL</span>
+                    <small>{sellerQrisNmid ? `NMID: ${activeQrisNmid}` : activeQrisNmid}</small>
                   </div>
                   <span className="qris-total">{formatRupiah(totalPrice)}</span>
-                  <small>Dukung BCA, GoPay, OVO, ShopeePay, Dana, LinkAja</small>
+                  <small>
+                    Bayar via QRIS penjual (BCA, GoPay, OVO, ShopeePay, Dana) lalu unggah struk bukti bayar di bawah ini atau kirim ke WhatsApp penjual.
+                  </small>
                 </div>
               </div>
             )}
 
             {paymentMethod === "transfer" && (
               <div className="modal-pay-instruction">
-                <h4>Rekening Transfer Resmi</h4>
+                <h4>Rekening Transfer Penjual</h4>
                 <div className="bank-account-box">
-                  <span className="bank-name">BCA (Bank Central Asia)</span>
-                  <strong className="bank-number">8210 9328 11</strong>
-                  <span className="bank-holder">a.n. {sellerName || "Nadia Putri"} (Mitra OpenPO)</span>
-                  <button
-                    type="button"
-                    className="button button-light button-small"
-                    onClick={() => {
-                      navigator.clipboard.writeText("8210932811");
-                      setCopiedBank(true);
-                      setTimeout(() => setCopiedBank(false), 2000);
-                    }}
-                  >
-                    {copiedBank ? "✓ Tersalin ke Clipboard" : "Salin No. Rekening"}
-                  </button>
+                  <span className="bank-name">{activeBankName}</span>
+                  <strong className="bank-number">{activeBankNumber}</strong>
+                  <span className="bank-holder">a.n. {activeBankHolder}</span>
+                  {sellerBankNumber && (
+                    <button
+                      type="button"
+                      className="button button-light button-small"
+                      onClick={() => {
+                        navigator.clipboard.writeText(sellerBankNumber.replace(/\s+/g, ""));
+                        setCopiedBank(true);
+                        setTimeout(() => setCopiedBank(false), 2000);
+                      }}
+                    >
+                      {copiedBank ? "✓ Tersalin ke Clipboard" : "Salin No. Rekening"}
+                    </button>
+                  )}
                 </div>
               </div>
             )}

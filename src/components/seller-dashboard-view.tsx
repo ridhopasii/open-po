@@ -43,6 +43,10 @@ export type SellerProfile = {
   faculty: string;
   whatsapp: string;
   avatar_path?: string | null;
+  bank_name?: string | null;
+  bank_number?: string | null;
+  bank_holder?: string | null;
+  qris_nmid?: string | null;
 };
 
 export type SellerProduct = {
@@ -160,11 +164,11 @@ export function SellerDashboardView({
   const [newProdPrice, setNewProdPrice] = useState("15000");
   const [newProdDesc, setNewProdDesc] = useState("");
 
-  // Store & payment settings state
-  const [bankName, setBankName] = useState("BCA (Bank Central Asia)");
-  const [bankNumber, setBankNumber] = useState("8210 9328 11");
-  const [bankHolder, setBankHolder] = useState(seller?.display_name ?? "Nadia Putri");
-  const [qrisNmid, setQrisNmid] = useState("ID102026OPENPO01");
+  // Store & payment settings state (terhubung ke profil database penjual)
+  const [bankName, setBankName] = useState(seller?.bank_name || "BCA (Bank Central Asia)");
+  const [bankNumber, setBankNumber] = useState(seller?.bank_number || "");
+  const [bankHolder, setBankHolder] = useState(seller?.bank_holder || seller?.display_name || "");
+  const [qrisNmid, setQrisNmid] = useState(seller?.qris_nmid || "");
   const [qrisNote, setQrisNote] = useState("Dukung BCA, GoPay, OVO, Dana, LinkAja, ShopeePay");
 
   // Broadcast Hub state

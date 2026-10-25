@@ -13,6 +13,39 @@ alter table if exists public.po_sellers
   add column if not exists bank_holder text,
   add column if not exists qris_nmid text;
 
+drop function if exists public.po_get_my_seller_profile();
+create or replace function public.po_get_my_seller_profile()
+returns table (
+  display_name text,
+  faculty text,
+  whatsapp text,
+  avatar_path text,
+  bank_name text,
+  bank_number text,
+  bank_holder text,
+  qris_nmid text
+)
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select
+    s.display_name,
+    s.faculty,
+    s.whatsapp,
+    s.avatar_path,
+    s.bank_name,
+    s.bank_number,
+    s.bank_holder,
+    s.qris_nmid
+  from public.po_sellers s
+  where s.user_id = (select auth.uid());
+$$;
+
+revoke all on function public.po_get_my_seller_profile() from public, anon;
+grant execute on function public.po_get_my_seller_profile() to authenticated;
+
 -- 3. Relax artificial quota constraint on po_batches (allow quota >= 1 without arbitrary 10000 ceiling)
 alter table if exists public.po_batches drop constraint if exists po_batches_quota_check;
 alter table if exists public.po_batches add constraint po_batches_quota_check check (quota >= 1);

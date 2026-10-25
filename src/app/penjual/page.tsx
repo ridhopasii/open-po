@@ -30,7 +30,16 @@ export default async function SellerPage({ searchParams }: PageProps) {
 
     if (user) {
       const { data: sellerRows } = await supabase.rpc("po_get_my_seller_profile");
-      seller = sellerRows?.[0] ?? null;
+      const baseSeller = sellerRows?.[0] ?? null;
+
+      // Ambil juga detail rekening & QRIS dari po_sellers
+      const { data: sellerExtra } = await supabase
+        .from("po_sellers")
+        .select("display_name,faculty,whatsapp,avatar_path,bank_name,bank_number,bank_holder,qris_nmid")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      seller = (sellerExtra || baseSeller) as SellerProfile | null;
 
       const { data: batchRows } = await supabase
         .from("po_batches")
