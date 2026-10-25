@@ -156,29 +156,9 @@ export function OrderTracker() {
           </button>
         </form>
 
-        <div className="tracker-quick-examples">
-          <span>Contoh cepat:</span>
-          <button
-            type="button"
-            className="quick-chip"
-            onClick={() => {
-              setQuery("PO-93DZHZJH");
-              handleSearch("PO-93DZHZJH");
-            }}
-          >
-            PO-93DZHZJH (Matcha)
-          </button>
-          <button
-            type="button"
-            className="quick-chip"
-            onClick={() => {
-              setQuery("PO-8942B");
-              handleSearch("PO-8942B");
-            }}
-          >
-            PO-8942B (Risol Mayo)
-          </button>
-        </div>
+        <p className="tracker-privacy-hint" style={{ marginTop: "1rem", fontSize: "0.85rem", color: "var(--muted, #64748b)" }}>
+          🔒 <em>Privasi terjamin: Informasi kontak dan nama pemesan disamarkan secara otomatis demi keamanan data.</em>
+        </p>
       </div>
 
       {errorMessage && (

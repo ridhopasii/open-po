@@ -68,11 +68,11 @@ const SELLER_STEPS = [
 const FAQS = [
   {
     q: "Apakah OpenPO gratis?",
-    a: "Ya, sepenuhnya gratis. Tidak ada biaya platform, komisi, atau biaya langganan. OpenPO adalah layanan kampus yang didukung komunitas.",
+    a: "OpenPO sepenuhnya gratis selama masa peluncuran. Penjual dapat membuka batch PO tanpa potongan komisi awal, dan dana penjualan langsung masuk ke rekening/QRIS penjual.",
   },
   {
     q: "Bagaimana jika penjual tidak memenuhi pesanan?",
-    a: "Setiap penjual terverifikasi melalui email kampus dan terdaftar dengan nomor WhatsApp aktif. Pembeli dapat menghubungi penjual langsung, dan superadmin kampus bisa menutup batch yang bermasalah.",
+    a: "Setiap penjual diverifikasi melalui nomor WhatsApp aktif dan fakultas asal. Pembeli dapat menghubungi penjual langsung, dan tim komunitas dapat menindaklanjuti batch yang bermasalah.",
   },
   {
     q: "Apakah saya harus membuat akun untuk memesan?",
@@ -93,10 +93,10 @@ const FAQS = [
 ];
 
 const STATS = [
-  { val: "12+", label: "Kampus aktif" },
-  { val: "2.400+", label: "Pesanan diproses" },
-  { val: "180+", label: "Penjual mahasiswa" },
-  { val: "98%", label: "Kepuasan pembeli" },
+  { val: "100%", label: "Komunitas Kampus" },
+  { val: "0 Rp", label: "Biaya Peluncuran" },
+  { val: "1-Klik", label: "Broadcast WhatsApp" },
+  { val: "Realtime", label: "Kunci Kuota PO" },
 ];
 
 export default async function CaraKerjaPage() {
@@ -135,7 +135,7 @@ export default async function CaraKerjaPage() {
                 <div className="mockup-card">
                   <span className="mockup-tag">🍵 Minuman</span>
                   <strong>Matcha Latte Kampus</strong>
-                  <small>Rp 18.000 · 34/50 terpesann</small>
+                  <small>Rp 18.000 · 34/50 terpesan</small>
                   <div className="mockup-bar"><div style={{ width: "68%" }} /></div>
                 </div>
                 <div className="mockup-card">
@@ -195,11 +195,11 @@ export default async function CaraKerjaPage() {
         {/* ── Divider Visual ── */}
         <div className="howto-divider-band" aria-hidden="true">
           <div className="howto-divider-inner">
-            {["Open PO 🎓", "Pre-Order Kampus 🍵", "Tanpa Aplikasi 📱", "Gratis Selamanya 💚", "Terverifikasi ✓"].map((t, i) => (
+            {["Open PO 🎓", "Pre-Order Kampus 🍵", "Tanpa Aplikasi 📱", "Bebas Komisi Peluncuran 💚", "Komunitas Kampus ✓"].map((t, i) => (
               <span key={i}>{t}</span>
             ))}
             {/* repeat for infinite scroll effect */}
-            {["Open PO 🎓", "Pre-Order Kampus 🍵", "Tanpa Aplikasi 📱", "Gratis Selamanya 💚", "Terverifikasi ✓"].map((t, i) => (
+            {["Open PO 🎓", "Pre-Order Kampus 🍵", "Tanpa Aplikasi 📱", "Bebas Komisi Peluncuran 💚", "Komunitas Kampus ✓"].map((t, i) => (
               <span key={`r-${i}`} aria-hidden="true">{t}</span>
             ))}
           </div>
@@ -225,7 +225,7 @@ export default async function CaraKerjaPage() {
             </div>
             <div className="howto-steps-cta">
               <Link href="/penjual" className="button">Buka Toko Gratis →</Link>
-              <Link href="/penjual?demo=1" className="button button-light">Lihat Demo Penjual</Link>
+              <Link href="/penjual" className="button button-light">Panduan Penjual</Link>
             </div>
           </div>
         </section>
@@ -252,7 +252,7 @@ export default async function CaraKerjaPage() {
         <section className="howto-cta-band">
           <div className="howto-cta-inner">
             <h2>Siap jual atau mau pesan?</h2>
-            <p>Platform pre-order kampus tercepat. Gratis selamanya. Mulai dalam 2 menit.</p>
+            <p>Platform pre-order komunitas kampus. Gratis selama masa peluncuran. Mulai dalam 2 menit.</p>
             <div className="howto-cta-buttons">
               <Link href="/penjual" className="button">Mulai Buka PO Gratis</Link>
               <Link href="/" className="button button-outline-white">Jelajah Produk →</Link>

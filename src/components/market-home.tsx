@@ -200,7 +200,7 @@ export function MarketHome({ batches }: { batches: OpenBatch[] }) {
           <div className="hero-ticker">
             <span className="ticker-pulse" />
             <span className="ticker-label">
-              LIVE PRE-ORDER KAMPUS · 5 BATCH AKTIF · 128 PORSI TERPESAN HARI INI
+              PRE-ORDER KAMPUS · {batches.length > 0 ? `${batches.length} BATCH AKTIF` : "BATCH SEGERA DIBUKA"} · TITIK AMBIL KAMPUS
             </span>
           </div>
 
@@ -210,7 +210,7 @@ export function MarketHome({ batches }: { batches: OpenBatch[] }) {
           </h1>
 
           <p className="hero-subhead">
-            Platform PO resmi komunitas mahasiswa. Kuota transparan real-time, jadwal ambil pasti di selasar fakultas,
+            Platform pre-order komunitas mahasiswa. Kuota transparan real-time, jadwal ambil pasti di selasar fakultas,
             dan rekap WhatsApp otomatis tanpa antre.
           </p>
 
@@ -392,7 +392,6 @@ export function MarketHome({ batches }: { batches: OpenBatch[] }) {
         <Link href="/lacak">Lacak Pesanan</Link>
         <Link href="/cara-kerja">Cara Kerja</Link>
         <Link href="/penjual">Ruang Penjual</Link>
-        <Link href="/admin">Panel Superadmin</Link>
         <span>Medan, Sumatera Utara</span>
       </footer>
     </>
