@@ -616,7 +616,7 @@ export function SellerDashboardView({
                           onClick={() => copyPoLink(batch.id, batch.product.name)}
                           title="Salin tautan halaman PO untuk dibagikan"
                         >
-                          🔗 Salin Link
+                          Salin Tautan
                         </button>
                         <button
                           type="button"
@@ -627,7 +627,7 @@ export function SellerDashboardView({
                           }}
                           title="Buka generator broadcast WhatsApp untuk batch ini"
                         >
-                          📢 Format WA
+                          Format WA
                         </button>
                         <button
                           type="button"

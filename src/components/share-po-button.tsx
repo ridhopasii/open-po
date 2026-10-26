@@ -64,7 +64,7 @@ export function SharePoButton({
           borderRadius: "10px",
         }}
       >
-        <span>📲 Bagikan ke WA &amp; Story</span>
+        <span>Bagikan ke WA &amp; Story</span>
       </a>
 
       <button
@@ -79,7 +79,7 @@ export function SharePoButton({
           borderRadius: "10px",
         }}
       >
-        {copied ? "✓ Tautan Tersalin" : "🔗 Salin Tautan PO"}
+        {copied ? "Tautan Tersalin" : "Salin Tautan PO"}
       </button>
     </div>
   );

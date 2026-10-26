@@ -151,7 +151,7 @@ export default async function OrderPage({ params }: PageProps) {
     statusBadgeBg = "#dc2626";
   } else if (hoursToClose <= 24 && hoursToClose > 0) {
     const hoursLeft = Math.max(1, Math.ceil(hoursToClose));
-    statusBadgeLabel = `⚡ Segera Tutup (<${hoursLeft} Jam)`;
+    statusBadgeLabel = `Segera Tutup (<${hoursLeft} Jam)`;
     statusBadgeBg = "#d97706";
   } else if (batch.status === "upcoming") {
     statusBadgeLabel = "Segera Dibuka";

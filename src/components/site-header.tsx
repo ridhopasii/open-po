@@ -33,26 +33,26 @@ export async function SiteHeader() {
           <a
             href="https://www.jualbeliusupolmed.web.id"
             className="ecosystem-pill-item"
-            title="Ke Marketplace Barang Bekas"
+            title="Ke Marketplace Jual Beli"
           >
-            <span className="icon">🛍️</span>
-            <span>Marketplace</span>
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span>Jual Beli</span>
           </a>
           <div
             className="ecosystem-pill-item active"
-            title="Sedang di Open PO Kampus"
+            title="Sedang di OpenPO Kampus"
           >
-            <span className="icon">🍵</span>
-            <span>Open PO</span>
+            <svg className="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            <span>OpenPO</span>
             <span className="ecosystem-live-badge">AKTIF</span>
           </div>
           <a
             href="https://www.jualbeliusupolmed.web.id/mading"
             className="ecosystem-pill-item"
-            title="Ke Curhat & Menfess Kampus"
+            title="Ke Menfess Kampus"
           >
-            <span className="icon">💖</span>
-            <span>Curhat &amp; Menfess</span>
+            <svg className="w-3.5 h-3.5 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span>Menfess</span>
           </a>
         </div>
       </div>
@@ -76,7 +76,7 @@ export async function SiteHeader() {
           <div className="brand-copy">
             <div className="brand-title-row">
               <span className="brand-name">Kampusfess</span>
-              <span className="brand-campus-pill">OPEN PO</span>
+              <span className="brand-campus-pill">OpenPO</span>
             </div>
             <small>Marketplace USU • POLMED</small>
           </div>
