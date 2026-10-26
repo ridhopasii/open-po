@@ -1,0 +1,27 @@
+{
+  "id": "/",
+  "name": "OpenPO — Pre-Order Mahasiswa USU & POLMED",
+  "short_name": "OpenPO",
+  "description": "Etalase pemesanan pre-order makanan, minuman, dan merchandise resmi karya mahasiswa USU & POLMED Medan.",
+  "lang": "id",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#059669",
+  "categories": ["shopping", "food", "education", "lifestyle"],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48 32x32 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png"
+    }
+  ]
+}

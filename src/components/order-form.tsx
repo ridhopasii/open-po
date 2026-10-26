@@ -65,6 +65,7 @@ export function OrderForm({
   const [message, setMessage] = useState("");
   const [waError, setWaError] = useState("");
   const [copiedBank, setCopiedBank] = useState(false);
+  const [agreedConsent, setAgreedConsent] = useState(true);
   const [orderResult, setOrderResult] = useState<PlacedOrderResult | null>(null);
 
   const requestRef = useRef<{ fingerprint: string; id: string } | null>(null);
@@ -339,7 +340,20 @@ export function OrderForm({
           <strong>{formatRupiah(totalPrice)}</strong>
         </div>
 
-        <button className="button button-primary button-block" disabled={busy || remaining < 1}>
+        <label className="order-consent-checkbox" style={{ display: "flex", alignItems: "flex-start", gap: "8px", fontSize: "0.8rem", color: "var(--muted, #64748b)", cursor: "pointer", margin: "14px 0" }}>
+          <input
+            type="checkbox"
+            required
+            checked={agreedConsent}
+            onChange={(e) => setAgreedConsent(e.target.checked)}
+            style={{ marginTop: "2px", accentColor: "#059669" }}
+          />
+          <span style={{ lineHeight: "1.4" }}>
+            Saya menyetujui pemakaian nama & nomor WhatsApp untuk konfirmasi pesanan & pengingat jadwal pickup sesuai UU PDP No. 27/2022.
+          </span>
+        </label>
+
+        <button className="button button-primary button-block" disabled={busy || remaining < 1 || !agreedConsent}>
           {busy
             ? "Mencatat Pesanan…"
             : remaining < 1

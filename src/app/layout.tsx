@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   },
   description:
     "Cari barang pre-order dari mahasiswa dan ambil sesuai jadwal di kampus.",
+  manifest: "/manifest.json",
   applicationName: "OpenPO by kampusfess.id",
   metadataBase: new URL("https://open-po.vercel.app"),
   openGraph: {

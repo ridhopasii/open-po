@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { OrderForm } from "@/components/order-form";
 import { SiteHeader } from "@/components/site-header";
 import { SellerIdentity } from "@/components/seller-identity";
+import { SharePoButton } from "@/components/share-po-button";
 import { formatCampusDate, formatRupiah, getOpenBatch } from "@/lib/marketplace";
 import { getSellerAvatarUrl } from "@/lib/marketplace-shared";
 import { createClient } from "@/lib/supabase/server";
@@ -165,6 +166,13 @@ export default async function OrderPage({ params }: PageProps) {
                 <span> / porsi / item</span>
               </div>
             </div>
+
+            <SharePoButton
+              title={batch.product.name}
+              price={batch.product.price_idr}
+              batchId={batch.id}
+              remaining={remaining}
+            />
 
             {/* Facts Grid */}
             <div className="detail-facts">
