@@ -322,16 +322,16 @@ export function OrderTracker() {
                   <div className="tracked-pickup-info">
                     <div className="pickup-box">
                       <div className="pickup-item">
-                        <span className="pickup-label">📍 TITIK PENGAMBILAN</span>
+                        <span className="pickup-label">TITIK PENGAMBILAN</span>
                         <strong className="pickup-val">{order.batch.pickup_point}</strong>
                       </div>
                       <div className="pickup-item">
-                        <span className="pickup-label">🗓️ JADWAL AMBIL</span>
+                        <span className="pickup-label">JADWAL AMBIL</span>
                         <strong className="pickup-val">{formatCampusDate(order.batch.pickup_at)}</strong>
                       </div>
                       {order.batch.pickup_note && (
                         <div className="pickup-item note">
-                          <span className="pickup-label">ℹ️ CATATAN PENJUAL</span>
+                          <span className="pickup-label">CATATAN PENJUAL</span>
                           <span className="pickup-val-note">{order.batch.pickup_note}</span>
                         </div>
                       )}

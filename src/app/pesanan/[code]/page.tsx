@@ -242,7 +242,10 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
           {/* Jaminan Refund & Mediasi */}
           <div className="order-confirm-card" style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", padding: "16px", borderRadius: "14px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "6px", fontWeight: 700, color: "#166534", fontSize: "13px" }}>
-              <span>🛡️ Jaminan Pengembalian Dana 100%</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+              <span>Jaminan Pengembalian Dana 100%</span>
             </div>
             <p style={{ fontSize: "12px", color: "#15803d", marginTop: "6px", lineHeight: "1.5" }}>
               Dana pesananmu dilindungi jaminan komunitas OpenPO. Jika batch dibatalkan oleh penjual atau tidak memenuhi kuota minimum, dana yang telah ditransfer wajib dikembalikan utuh 100% tanpa potongan.

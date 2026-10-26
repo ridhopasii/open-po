@@ -269,7 +269,10 @@ export default async function OrderPage({ params }: PageProps) {
             {/* Kebijakan Pembatalan & Refund */}
             <div className="detail-policy-card" style={{ marginTop: "16px", padding: "16px", background: "var(--usu-50, #ECFDF5)", border: "1px solid var(--usu-200, #A7F3D0)", borderRadius: "14px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--usu-900, #064E3B)", fontWeight: 700, fontSize: "14px" }}>
-                <span>🛡️ Kebijakan Pembatalan &amp; Pengembalian Dana (Refund)</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+                <span>Kebijakan Pembatalan &amp; Pengembalian Dana (Refund)</span>
               </div>
               <ul style={{ margin: "8px 0 0 16px", padding: 0, fontSize: "12.5px", color: "var(--usu-800, #065F46)", lineHeight: "1.6" }}>
                 <li><strong>Jaminan 100% Refund:</strong> Jika batch PO tidak memenuhi kuota minimum, dibatalkan penjual, atau barang gagal diproduksi, dana yang telah ditransfer dikembalikan utuh 100%.</li>

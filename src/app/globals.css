@@ -5116,8 +5116,9 @@ h1, h2, h3, p { margin-top: 0; }
 }
 
 /* ==========================================================================
-   UNIVERSAL DESIGN SYSTEM OVERHAUL (ECOSYSTEM V2 — OPTION 2 CAMPUS GREEN)
-   Adopting Jual Beli USU Polmed Apple squircle geometry & unified tokens
+   REAL-WORLD E-COMMERCE DESIGN SYSTEM (TOKOPEDIA & GOFOOD BENCHMARK)
+   Solid clean cards, high-contrast typography, rectangular micro-badges,
+   zero AI mesh gradients, crisp 12px geometry, and production polish.
    ========================================================================== */
 
 :root {
@@ -5126,73 +5127,66 @@ h1, h2, h3, p { margin-top: 0; }
   --polmed-violet: #7c3aed;
   --polmed-violet-hover: #6d28d9;
   
-  --bg-page: #f8f9fa;
+  --bg-page: #f7f8fa;
   --bg-card: #ffffff;
-  --text-main: #1d1d1f;
+  --text-main: #1f2937;
   --text-muted: #64748b;
-  --border-ui: rgba(0, 0, 0, 0.06);
-  --border-ui-hover: rgba(5, 150, 105, 0.25);
+  --border-ui: #e5e7eb;
+  --border-ui-hover: #059669;
   
-  --radius-squircle: 22px;
-  --radius-card: 22px;
-  --radius-pill: 9999px;
-  --radius-inner: 16px;
+  --radius-card: 12px;
+  --radius-button: 8px;
+  --radius-pill: 20px;
   
-  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.03);
-  --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.08);
-  --shadow-btn: 0 2px 8px rgba(5, 150, 105, 0.25);
+  --shadow-card: 0 1px 4px rgba(0, 0, 0, 0.04);
+  --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.08);
+  --shadow-btn: 0 1px 3px rgba(5, 150, 105, 0.2);
 }
 
 body {
   background-color: var(--bg-page) !important;
   color: var(--text-main) !important;
   font-family: var(--font-jakarta), "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-  letter-spacing: -0.015em !important;
+  letter-spacing: -0.01em !important;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Subtle Animated Ambient Mesh Background matching Jual Beli USU */
+/* Purge AI radial mesh gradients */
 body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(circle at 15% 50%, rgba(124, 58, 237, 0.04) 0%, transparent 50%),
-    radial-gradient(circle at 85% 30%, rgba(5, 150, 105, 0.04) 0%, transparent 50%);
-  background-size: 200% 200%;
-  pointer-events: none;
+  display: none !important;
 }
 
-/* Header Frosted Glass */
+/* Clean Solid E-Commerce Header */
 .site-header {
   position: sticky !important;
   top: 0 !important;
   z-index: 50 !important;
-  background: rgba(255, 255, 255, 0.85) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+  background: #ffffff !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03) !important;
 }
 
-/* Universal Ecosystem Switcher Bar */
+/* Ecosystem Switcher Bar */
 .ecosystem-switcher-bar {
-  background: rgba(241, 245, 249, 0.8) !important;
-  backdrop-filter: blur(12px) !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+  background: #f8fafc !important;
+  backdrop-filter: none !important;
+  border-bottom: 1px solid #e5e7eb !important;
 }
 
-/* Mobile Nav Frosted Glass */
+/* Mobile Nav Bar */
 .mobile-nav {
   position: fixed !important;
   bottom: 0 !important;
   left: 0 !important;
   right: 0 !important;
   z-index: 50 !important;
-  background: rgba(255, 255, 255, 0.92) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+  background: #ffffff !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-top: 1px solid #e5e7eb !important;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04) !important;
   padding-bottom: max(6px, env(safe-area-inset-bottom, 0px)) !important;
 }
 
@@ -5202,19 +5196,19 @@ body::before {
 }
 
 /* ==========================================================================
-   CARDS: ADOPT JUAL BELI USU SQUIRCLE GEOMETRY
+   CARDS: TOKOPEDIA 12PX SOLID CARD GEOMETRY
    ========================================================================== */
 .shop-card,
 .shop-card-live-wrap,
 .shop-card-sample {
-  border-radius: 22px !important;
-  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  border-radius: 12px !important;
+  border: 1px solid #e5e7eb !important;
   background: #ffffff !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
   overflow: hidden !important;
   display: flex !important;
   flex-direction: column !important;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
   -webkit-tap-highlight-color: transparent !important;
 }
 
@@ -5222,13 +5216,13 @@ body::before {
 .shop-card-live-wrap:hover,
 .shop-card-sample:hover {
   transform: translateY(-2px) !important;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08) !important;
-  border-color: rgba(5, 150, 105, 0.25) !important;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08) !important;
+  border-color: #059669 !important;
 }
 
 .shop-card:active,
 .shop-card-live-wrap:active {
-  transform: scale(0.98) !important;
+  transform: scale(0.99) !important;
 }
 
 /* Card Photo Container */
@@ -5236,22 +5230,22 @@ body::before {
   position: relative !important;
   width: 100% !important;
   aspect-ratio: 1 / 1 !important;
-  border-radius: 20px 20px 0 0 !important;
+  border-radius: 11px 11px 0 0 !important;
   overflow: hidden !important;
   background: #f1f5f9 !important;
 }
 
 .shop-card-photo img {
   object-fit: cover !important;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: transform 0.3s ease !important;
 }
 
 .shop-card:hover .shop-card-photo img,
 .shop-card-live-wrap:hover .shop-card-photo img {
-  transform: scale(1.04) !important;
+  transform: scale(1.03) !important;
 }
 
-/* Floating Card Badges */
+/* Tokopedia-Style Crisp Micro Badges */
 .card-top-badges {
   position: absolute !important;
   top: 8px !important;
@@ -5268,28 +5262,38 @@ body::before {
 .urgent-badge-chip,
 .full-badge-chip,
 .demo-tag {
-  border-radius: 9999px !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  font-size: 10.5px !important;
+  border-radius: 4px !important;
+  font-size: 11px !important;
   font-weight: 700 !important;
-  padding: 3px 9px !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  padding: 2px 7px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06) !important;
+  letter-spacing: 0.02em !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .live-badge-chip {
-  background: rgba(5, 150, 105, 0.92) !important;
-  color: #ffffff !important;
+  background: #ecfdf5 !important;
+  color: #065f46 !important;
+  border: 1px solid #a7f3d0 !important;
 }
 
 .urgent-badge-chip {
-  background: rgba(217, 119, 6, 0.92) !important;
-  color: #ffffff !important;
+  background: #fffbeb !important;
+  color: #92400e !important;
+  border: 1px solid #fde68a !important;
 }
 
 .full-badge-chip {
-  background: rgba(30, 41, 59, 0.88) !important;
-  color: #ffffff !important;
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+.demo-tag {
+  background: #f8fafc !important;
+  color: #64748b !important;
+  border: 1px solid #e2e8f0 !important;
 }
 
 /* Card Content / Info Area */
@@ -5310,29 +5314,27 @@ body::before {
 }
 
 .shop-card-category {
-  font-size: 10px !important;
-  font-weight: 700 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.04em !important;
-  color: var(--usu-emerald) !important;
-  background: rgba(5, 150, 105, 0.08) !important;
-  padding: 2px 7px !important;
-  border-radius: 9999px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  background: #f1f5f9 !important;
+  padding: 2px 8px !important;
+  border-radius: 4px !important;
 }
 
 .card-closes-badge {
-  font-size: 10.5px !important;
+  font-size: 11px !important;
   color: #64748b !important;
   font-weight: 500 !important;
 }
 
 .card-title {
-  margin: 2px 0 0 !important;
-  font-size: 13.5px !important;
-  font-weight: 700 !important;
-  line-height: 1.35 !important;
-  color: #1d1d1f !important;
-  letter-spacing: -0.015em !important;
+  margin: 3px 0 0 !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+  color: #1f2937 !important;
+  letter-spacing: -0.01em !important;
   display: -webkit-box !important;
   -webkit-line-clamp: 2 !important;
   -webkit-box-orient: vertical !important;
@@ -5348,18 +5350,18 @@ body::before {
 .quota-bar-track {
   height: 5px !important;
   border-radius: 9999px !important;
-  background: #e2e8f0 !important;
+  background: #e5e7eb !important;
   overflow: hidden !important;
 }
 
 .quota-bar-fill {
   height: 100% !important;
   border-radius: 9999px !important;
-  transition: width 0.4s ease !important;
+  transition: width 0.3s ease !important;
 }
 
 .quota-bar-fill.bar-ok {
-  background: var(--usu-emerald) !important;
+  background: #059669 !important;
 }
 
 .quota-bar-fill.bar-warning {
@@ -5373,7 +5375,7 @@ body::before {
 .quota-text-row {
   display: flex !important;
   justify-content: space-between !important;
-  font-size: 10.5px !important;
+  font-size: 11px !important;
   color: #64748b !important;
   margin-top: 3px !important;
 }
@@ -5381,8 +5383,8 @@ body::before {
 .card-pickup-spot {
   display: flex !important;
   align-items: center !important;
-  gap: 4px !important;
-  font-size: 11px !important;
+  gap: 5px !important;
+  font-size: 11.5px !important;
   color: #64748b !important;
 }
 
@@ -5392,163 +5394,175 @@ body::before {
   justify-content: space-between !important;
   margin-top: 4px !important;
   padding-top: 8px !important;
-  border-top: 1px solid rgba(0, 0, 0, 0.04) !important;
+  border-top: 1px solid #f1f5f9 !important;
 }
 
 .card-price-wrap small {
   display: block !important;
-  font-size: 10px !important;
+  font-size: 10.5px !important;
   color: #64748b !important;
 }
 
 .card-price {
-  font-size: 15.5px !important;
+  font-size: 16px !important;
   font-weight: 800 !important;
-  color: var(--usu-emerald) !important;
+  color: #059669 !important;
   letter-spacing: -0.02em !important;
 }
 
 .card-action-btn {
-  border-radius: 9999px !important;
+  border-radius: 6px !important;
   padding: 5px 12px !important;
-  font-size: 11.5px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
-  background: rgba(5, 150, 105, 0.1) !important;
-  color: var(--usu-emerald) !important;
-  transition: all 0.2s ease !important;
+  background: #ecfdf5 !important;
+  color: #059669 !important;
+  border: 1px solid #a7f3d0 !important;
+  transition: all 0.15s ease !important;
 }
 
 .shop-card:hover .card-action-btn,
 .shop-card-live-wrap:hover .card-action-btn {
-  background: var(--usu-emerald) !important;
+  background: #059669 !important;
+  border-color: #059669 !important;
   color: #ffffff !important;
 }
 
 .card-seller-footer {
   margin-top: 4px !important;
   padding-top: 6px !important;
-  border-top: 1px dashed rgba(0, 0, 0, 0.05) !important;
+  border-top: 1px dashed #e5e7eb !important;
 }
 
 /* ==========================================================================
-   BUTTONS: ALL PILL SHAPE WITH ACTIVE SCALE
+   BUTTONS: TOKOPEDIA / GOFOOD PRACTICAL SHAPES
    ========================================================================== */
 .button,
 .btn {
-  border-radius: 9999px !important;
+  border-radius: 8px !important;
   font-weight: 700 !important;
   letter-spacing: -0.01em !important;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: all 0.15s ease !important;
   -webkit-tap-highlight-color: transparent !important;
 }
 
 .button:active,
 .btn:active {
-  transform: scale(0.96) !important;
+  transform: scale(0.98) !important;
 }
 
 .button-primary,
 .button-primary-action,
 .btn-primary {
-  background: var(--usu-emerald) !important;
-  border-color: var(--usu-emerald) !important;
+  background: #059669 !important;
+  border: 1px solid #059669 !important;
   color: #ffffff !important;
-  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25) !important;
+  box-shadow: 0 1px 3px rgba(5, 150, 105, 0.25) !important;
 }
 
 .button-primary:hover,
 .button-primary-action:hover,
 .btn-primary:hover {
-  background: var(--usu-emerald-hover) !important;
-  border-color: var(--usu-emerald-hover) !important;
-  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35) !important;
+  background: #047857 !important;
+  border-color: #047857 !important;
+  box-shadow: 0 3px 8px rgba(5, 150, 105, 0.35) !important;
 }
 
 .button-outline,
 .btn-outline {
-  border-radius: 9999px !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  background: rgba(255, 255, 255, 0.85) !important;
-  backdrop-filter: blur(8px) !important;
-  color: #1d1d1f !important;
+  border-radius: 8px !important;
+  border: 1px solid #d1d5db !important;
+  background: #ffffff !important;
+  color: #1f2937 !important;
 }
 
 .button-outline:hover,
 .btn-outline:hover {
-  background: rgba(0, 0, 0, 0.04) !important;
+  background: #f8fafc !important;
+  border-color: #9ca3af !important;
 }
 
 .button-light {
-  border-radius: 9999px !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border-radius: 8px !important;
+  border: 1px solid #e5e7eb !important;
+  background: #ffffff !important;
+  color: #374151 !important;
+}
+
+.button-light:hover {
+  background: #f3f4f6 !important;
 }
 
 .button-small {
-  border-radius: 9999px !important;
+  border-radius: 6px !important;
   padding: 6px 14px !important;
   font-size: 12px !important;
 }
 
 /* ==========================================================================
-   SEARCH & FILTERS & CATEGORIES
+   SEARCH, SORT & CATEGORIES (TOKOPEDIA CHIP STYLE)
    ========================================================================== */
 .shop-search {
-  border-radius: 9999px !important;
-  background: #ffffff !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02) !important;
+  border-radius: 8px !important;
+  background: #f3f4f6 !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: none !important;
   transition: all 0.2s ease !important;
 }
 
 .shop-search:focus-within {
-  border-color: var(--usu-emerald) !important;
+  background: #ffffff !important;
+  border-color: #059669 !important;
   box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12) !important;
 }
 
 .shop-search input {
-  border-radius: 9999px !important;
+  border-radius: 8px !important;
   font-size: 13.5px !important;
+  background: transparent !important;
 }
 
 .sort-dropdown {
-  border-radius: 9999px !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border-radius: 8px !important;
+  border: 1px solid #d1d5db !important;
   background: #ffffff !important;
-  padding: 6px 14px !important;
-  font-size: 12px !important;
+  padding: 6px 12px !important;
+  font-size: 12.5px !important;
   font-weight: 600 !important;
-  color: #475569 !important;
+  color: #374151 !important;
   cursor: pointer !important;
 }
 
 .sort-dropdown:focus {
   outline: none !important;
-  border-color: var(--usu-emerald) !important;
+  border-color: #059669 !important;
 }
 
 .shop-chip {
-  border-radius: 9999px !important;
-  padding: 7px 16px !important;
-  font-size: 12.5px !important;
+  border-radius: 20px !important;
+  padding: 6px 14px !important;
+  font-size: 13px !important;
   font-weight: 600 !important;
   background: #ffffff !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid #e5e7eb !important;
   color: #475569 !important;
-  transition: all 0.2s ease !important;
+  transition: all 0.15s ease !important;
   cursor: pointer !important;
   white-space: nowrap !important;
 }
 
 .shop-chip:hover {
-  background: rgba(0, 0, 0, 0.04) !important;
-  color: #1d1d1f !important;
+  background: #f8fafc !important;
+  color: #1e2937 !important;
+  border-color: #cbd5e1 !important;
 }
 
 .shop-chip.selected {
-  background: #1d1d1f !important;
-  border-color: #1d1d1f !important;
-  color: #ffffff !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+  background: #ecfdf5 !important;
+  border-color: #059669 !important;
+  color: #059669 !important;
+  font-weight: 700 !important;
+  box-shadow: none !important;
 }
 
 /* ==========================================================================
@@ -5568,48 +5582,51 @@ body::before {
 .track-card,
 .seller-card,
 .admin-card {
-  border-radius: 22px !important;
-  border: 1px solid rgba(0, 0, 0, 0.06) !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03) !important;
+  border-radius: 12px !important;
+  border: 1px solid #e5e7eb !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
 }
 
 .order-modal-card {
-  border-radius: 24px !important;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12) !important;
 }
 
 .detail-hero-photo {
-  border-radius: 20px !important;
+  border-radius: 12px !important;
   overflow: hidden !important;
 }
 
 .detail-photo-badge {
-  border-radius: 9999px !important;
-  backdrop-filter: blur(8px) !important;
+  border-radius: 4px !important;
+  backdrop-filter: none !important;
 }
 
 .verified-campus-badge {
-  border-radius: 9999px !important;
-  background: rgba(5, 150, 105, 0.1) !important;
-  color: var(--usu-emerald) !important;
+  border-radius: 4px !important;
+  background: #ecfdf5 !important;
+  color: #065f46 !important;
+  border: 1px solid #a7f3d0 !important;
   font-weight: 700 !important;
   font-size: 11px !important;
-  padding: 3px 10px !important;
+  padding: 3px 8px !important;
 }
 
-/* Button WA & Haptic scale */
+/* Button WA */
 .button-wa {
   background: #25d366 !important;
   color: #ffffff !important;
   border: 1px solid #25d366 !important;
-  border-radius: 9999px !important;
+  border-radius: 8px !important;
   font-weight: 700 !important;
-  box-shadow: 0 2px 8px rgba(37, 211, 102, 0.25) !important;
+  box-shadow: 0 1px 3px rgba(37, 211, 102, 0.25) !important;
 }
 .button-wa:hover {
   background: #20bd5a !important;
   border-color: #20bd5a !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35) !important;
+  box-shadow: 0 3px 8px rgba(37, 211, 102, 0.35) !important;
 }
+
 

@@ -232,10 +232,10 @@ export function MarketHome({ batches }: { batches: OpenBatch[] }) {
                 onChange={(e) => setSortBy(e.target.value as any)}
                 className="sort-dropdown"
               >
-                <option value="closing">⏳ Segera Ditutup</option>
-                <option value="popular">🔥 Paling Diminati (% Kuota)</option>
-                <option value="price_asc">💰 Harga Terendah</option>
-                <option value="price_desc">💎 Harga Tertinggi</option>
+                <option value="closing">Segera Ditutup</option>
+                <option value="popular">Paling Diminati</option>
+                <option value="price_asc">Harga Terendah</option>
+                <option value="price_desc">Harga Tertinggi</option>
               </select>
             </div>
           </div>
@@ -248,11 +248,6 @@ export function MarketHome({ batches }: { batches: OpenBatch[] }) {
                 className={category === item ? "shop-chip selected" : "shop-chip"}
                 onClick={() => setCategory(item)}
               >
-                {item === "Makanan" && "🥐 "}
-                {item === "Minuman" && "☕ "}
-                {item === "Fashion" && "👕 "}
-                {item === "Kerajinan" && "💐 "}
-                {item === "Semua" && "🍽️ "}
                 {item}
               </button>
             ))}
@@ -274,7 +269,11 @@ export function MarketHome({ batches }: { batches: OpenBatch[] }) {
         ) : batches.length === 0 ? (
           <div className="shop-no-results">
             <div className="no-results-icon" aria-hidden="true">
-              🍵
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.75">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                <line x1="12" y1="22.08" x2="12" y2="12" />
+              </svg>
             </div>
             <h2>Belum ada Batch PO yang Sedang Dibuka</h2>
             <p>Jadilah yang pertama membuka pesanan makanan, minuman, kaos angkatan, atau jastip kampus!</p>
@@ -285,7 +284,10 @@ export function MarketHome({ batches }: { batches: OpenBatch[] }) {
         ) : (
           <div className="shop-no-results">
             <div className="no-results-icon" aria-hidden="true">
-              🔍
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.75">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
             </div>
             <h2>Barangnya belum ketemu</h2>
             <p>Coba kata kunci lain atau pilih kategori &ldquo;Semua&rdquo;.</p>
