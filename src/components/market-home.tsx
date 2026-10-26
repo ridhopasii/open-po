@@ -53,7 +53,7 @@ function LiveCard({ batch }: { batch: OpenBatch }) {
         />
         <div className="card-top-badges">
           <span className="live-badge-chip">PO Aktif</span>
-          {isAlmostFull && <span className="urgent-badge-chip">🔥 Sisa {remaining}!</span>}
+          {isAlmostFull && <span className="urgent-badge-chip">Sisa {remaining}!</span>}
           {isFull && <span className="full-badge-chip">Kuota Penuh</span>}
         </div>
       </div>
@@ -203,13 +203,13 @@ export function MarketHome({ batches }: { batches: OpenBatch[] }) {
 
           <div className="hero-cta-group">
             <a href="#katalog-po" className="button button-primary">
-              🔥 Jelajahi PO Aktif ({batches.length})
+              Jelajahi PO Aktif ({batches.length})
             </a>
             <Link href="/lacak" className="button button-outline">
-              🔍 Lacak Pesanan Saya
+              Lacak Pesanan Saya
             </Link>
             <Link href="/penjual" className="button button-ghost">
-              ✨ Buka PO Sendiri →
+              Buka PO Sendiri →
             </Link>
           </div>
 

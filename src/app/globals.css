@@ -5114,3 +5114,470 @@ h1, h2, h3, p { margin-top: 0; }
     font-size: 20px;
   }
 }
+
+/* ==========================================================================
+   UNIVERSAL DESIGN SYSTEM OVERHAUL (ECOSYSTEM V2 — OPTION 2 CAMPUS GREEN)
+   Adopting Jual Beli USU Polmed Apple squircle geometry & unified tokens
+   ========================================================================== */
+
+:root {
+  --usu-emerald: #059669;
+  --usu-emerald-hover: #047857;
+  --polmed-violet: #7c3aed;
+  --polmed-violet-hover: #6d28d9;
+  
+  --bg-page: #f8f9fa;
+  --bg-card: #ffffff;
+  --text-main: #1d1d1f;
+  --text-muted: #64748b;
+  --border-ui: rgba(0, 0, 0, 0.06);
+  --border-ui-hover: rgba(5, 150, 105, 0.25);
+  
+  --radius-squircle: 22px;
+  --radius-card: 22px;
+  --radius-pill: 9999px;
+  --radius-inner: 16px;
+  
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.03);
+  --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.08);
+  --shadow-btn: 0 2px 8px rgba(5, 150, 105, 0.25);
+}
+
+body {
+  background-color: var(--bg-page) !important;
+  color: var(--text-main) !important;
+  font-family: var(--font-jakarta), "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  letter-spacing: -0.015em !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Subtle Animated Ambient Mesh Background matching Jual Beli USU */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 15% 50%, rgba(124, 58, 237, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(5, 150, 105, 0.04) 0%, transparent 50%);
+  background-size: 200% 200%;
+  pointer-events: none;
+}
+
+/* Header Frosted Glass */
+.site-header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 50 !important;
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Universal Ecosystem Switcher Bar */
+.ecosystem-switcher-bar {
+  background: rgba(241, 245, 249, 0.8) !important;
+  backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Mobile Nav Frosted Glass */
+.mobile-nav {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 50 !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+  padding-bottom: max(6px, env(safe-area-inset-bottom, 0px)) !important;
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-link.active {
+  color: var(--usu-emerald) !important;
+}
+
+/* ==========================================================================
+   CARDS: ADOPT JUAL BELI USU SQUIRCLE GEOMETRY
+   ========================================================================== */
+.shop-card,
+.shop-card-live-wrap,
+.shop-card-sample {
+  border-radius: 22px !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  background: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.shop-card:hover,
+.shop-card-live-wrap:hover,
+.shop-card-sample:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08) !important;
+  border-color: rgba(5, 150, 105, 0.25) !important;
+}
+
+.shop-card:active,
+.shop-card-live-wrap:active {
+  transform: scale(0.98) !important;
+}
+
+/* Card Photo Container */
+.shop-card-photo {
+  position: relative !important;
+  width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 20px 20px 0 0 !important;
+  overflow: hidden !important;
+  background: #f1f5f9 !important;
+}
+
+.shop-card-photo img {
+  object-fit: cover !important;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.shop-card:hover .shop-card-photo img,
+.shop-card-live-wrap:hover .shop-card-photo img {
+  transform: scale(1.04) !important;
+}
+
+/* Floating Card Badges */
+.card-top-badges {
+  position: absolute !important;
+  top: 8px !important;
+  left: 8px !important;
+  right: 8px !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  pointer-events: none !important;
+  z-index: 10 !important;
+}
+
+.live-badge-chip,
+.urgent-badge-chip,
+.full-badge-chip,
+.demo-tag {
+  border-radius: 9999px !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  padding: 3px 9px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.live-badge-chip {
+  background: rgba(5, 150, 105, 0.92) !important;
+  color: #ffffff !important;
+}
+
+.urgent-badge-chip {
+  background: rgba(217, 119, 6, 0.92) !important;
+  color: #ffffff !important;
+}
+
+.full-badge-chip {
+  background: rgba(30, 41, 59, 0.88) !important;
+  color: #ffffff !important;
+}
+
+/* Card Content / Info Area */
+.shop-card-info {
+  padding: 12px 14px 14px !important;
+  display: flex !important;
+  flex: 1 !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+}
+
+.card-category-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+}
+
+.shop-card-category {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+  color: var(--usu-emerald) !important;
+  background: rgba(5, 150, 105, 0.08) !important;
+  padding: 2px 7px !important;
+  border-radius: 9999px !important;
+}
+
+.card-closes-badge {
+  font-size: 10.5px !important;
+  color: #64748b !important;
+  font-weight: 500 !important;
+}
+
+.card-title {
+  margin: 2px 0 0 !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+  color: #1d1d1f !important;
+  letter-spacing: -0.015em !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  min-height: 2.2rem !important;
+}
+
+/* Quota Bar */
+.card-quota-box {
+  margin: 4px 0 !important;
+}
+
+.quota-bar-track {
+  height: 5px !important;
+  border-radius: 9999px !important;
+  background: #e2e8f0 !important;
+  overflow: hidden !important;
+}
+
+.quota-bar-fill {
+  height: 100% !important;
+  border-radius: 9999px !important;
+  transition: width 0.4s ease !important;
+}
+
+.quota-bar-fill.bar-ok {
+  background: var(--usu-emerald) !important;
+}
+
+.quota-bar-fill.bar-warning {
+  background: #d97706 !important;
+}
+
+.quota-bar-fill.bar-full {
+  background: #dc2626 !important;
+}
+
+.quota-text-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  font-size: 10.5px !important;
+  color: #64748b !important;
+  margin-top: 3px !important;
+}
+
+.card-pickup-spot {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 11px !important;
+  color: #64748b !important;
+}
+
+.card-bottom-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-top: 4px !important;
+  padding-top: 8px !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.04) !important;
+}
+
+.card-price-wrap small {
+  display: block !important;
+  font-size: 10px !important;
+  color: #64748b !important;
+}
+
+.card-price {
+  font-size: 15.5px !important;
+  font-weight: 800 !important;
+  color: var(--usu-emerald) !important;
+  letter-spacing: -0.02em !important;
+}
+
+.card-action-btn {
+  border-radius: 9999px !important;
+  padding: 5px 12px !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  background: rgba(5, 150, 105, 0.1) !important;
+  color: var(--usu-emerald) !important;
+  transition: all 0.2s ease !important;
+}
+
+.shop-card:hover .card-action-btn,
+.shop-card-live-wrap:hover .card-action-btn {
+  background: var(--usu-emerald) !important;
+  color: #ffffff !important;
+}
+
+.card-seller-footer {
+  margin-top: 4px !important;
+  padding-top: 6px !important;
+  border-top: 1px dashed rgba(0, 0, 0, 0.05) !important;
+}
+
+/* ==========================================================================
+   BUTTONS: ALL PILL SHAPE WITH ACTIVE SCALE
+   ========================================================================== */
+.button,
+.btn {
+  border-radius: 9999px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.button:active,
+.btn:active {
+  transform: scale(0.96) !important;
+}
+
+.button-primary,
+.button-primary-action,
+.btn-primary {
+  background: var(--usu-emerald) !important;
+  border-color: var(--usu-emerald) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25) !important;
+}
+
+.button-primary:hover,
+.button-primary-action:hover,
+.btn-primary:hover {
+  background: var(--usu-emerald-hover) !important;
+  border-color: var(--usu-emerald-hover) !important;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35) !important;
+}
+
+.button-outline,
+.btn-outline {
+  border-radius: 9999px !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(8px) !important;
+  color: #1d1d1f !important;
+}
+
+.button-outline:hover,
+.btn-outline:hover {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+
+.button-light {
+  border-radius: 9999px !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.button-small {
+  border-radius: 9999px !important;
+  padding: 6px 14px !important;
+  font-size: 12px !important;
+}
+
+/* ==========================================================================
+   SEARCH & FILTERS & CATEGORIES
+   ========================================================================== */
+.shop-search {
+  border-radius: 9999px !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02) !important;
+  transition: all 0.2s ease !important;
+}
+
+.shop-search:focus-within {
+  border-color: var(--usu-emerald) !important;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12) !important;
+}
+
+.shop-search input {
+  border-radius: 9999px !important;
+  font-size: 13.5px !important;
+}
+
+.sort-dropdown {
+  border-radius: 9999px !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  background: #ffffff !important;
+  padding: 6px 14px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #475569 !important;
+  cursor: pointer !important;
+}
+
+.sort-dropdown:focus {
+  outline: none !important;
+  border-color: var(--usu-emerald) !important;
+}
+
+.shop-chip {
+  border-radius: 9999px !important;
+  padding: 7px 16px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #475569 !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+}
+
+.shop-chip:hover {
+  background: rgba(0, 0, 0, 0.04) !important;
+  color: #1d1d1f !important;
+}
+
+.shop-chip.selected {
+  background: #1d1d1f !important;
+  border-color: #1d1d1f !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ==========================================================================
+   DETAIL & ASIDE CARDS
+   ========================================================================== */
+.detail-copy,
+.order-card-aside,
+.detail-seller-card,
+.detail-policy-card,
+.detail-facts {
+  border-radius: 22px !important;
+}
+
+.detail-hero-photo {
+  border-radius: 20px !important;
+  overflow: hidden !important;
+}
+
+.detail-photo-badge {
+  border-radius: 9999px !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+.verified-campus-badge {
+  border-radius: 9999px !important;
+  background: rgba(5, 150, 105, 0.1) !important;
+  color: var(--usu-emerald) !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  padding: 3px 10px !important;
+}
+
