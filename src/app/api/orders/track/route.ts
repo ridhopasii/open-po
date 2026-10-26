@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { checkRateLimitDistributed, getClientIdentifier } from "@/lib/rate-limit";
 
 function maskName(name: string): string {
   if (!name) return "Pembeli";
@@ -19,6 +20,17 @@ function maskPhone(phone: string): string {
 }
 
 export async function GET(request: Request) {
+  // Rate limit: 20 percobaan per jam per IP (configurable)
+  const ip = getClientIdentifier(request);
+  const maxTrackPerHour = Number(process.env.RATE_LIMIT_TRACK_MAX || 20);
+  const rl = await checkRateLimitDistributed(`track:${ip}`, maxTrackPerHour, 3600_000);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: `Terlalu banyak percobaan pencarian pesanan. Tunggu ${rl.retryAfterSeconds} detik lagi.` },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSeconds) } }
+    );
+  }
+
   const { searchParams } = new URL(request.url);
   const q = searchParams.get("q")?.trim() || "";
 

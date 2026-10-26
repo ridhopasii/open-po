@@ -1,29 +1,26 @@
 /**
- * Simple sliding-window rate limiter menggunakan in-memory Map.
- *
- * ⚠️  Catatan untuk production:
- * Serverless functions (Vercel) bisa spawning multiple instances, sehingga
- * in-memory state tidak shared antar instance. Untuk production yang serius,
- * ganti dengan Vercel KV (Redis) atau Upstash.
- *
- * Untuk skala kampus (traffic rendah-sedang), solusi ini sudah cukup baik.
+ * Distributed rate limiter untuk OpenPO (Serverless Vercel ready).
+ * 
+ * Strategi:
+ * 1. Jika UPSTASH_REDIS_REST_URL & UPSTASH_REDIS_REST_TOKEN ada: gunakan Upstash REST API.
+ * 2. Jika createAdminClient() aktif: panggil Supabase RPC hit_po_rate_limit().
+ * 3. Fallback aman ke in-memory sliding window Map.
  */
+
+import { createAdminClient } from "@/lib/supabase/admin";
 
 type Window = { count: number; resetAt: number };
 
-const store = new Map<string, Window>();
+const inMemoryStore = new Map<string, Window>();
 
-// Bersihkan entry yang expired setiap 5 menit agar tidak memory leak
+// Bersihkan entry in-memory yang expired setiap 5 menit
 if (typeof setInterval !== "undefined") {
-  setInterval(
-    () => {
-      const now = Date.now();
-      for (const [key, win] of store) {
-        if (win.resetAt < now) store.delete(key);
-      }
-    },
-    5 * 60 * 1000,
-  );
+  setInterval(() => {
+    const now = Date.now();
+    for (const [key, win] of inMemoryStore) {
+      if (win.resetAt < now) inMemoryStore.delete(key);
+    }
+  }, 5 * 60 * 1000);
 }
 
 export type RateLimitResult =
@@ -31,10 +28,7 @@ export type RateLimitResult =
   | { ok: false; retryAfterSeconds: number };
 
 /**
- * Periksa apakah `identifier` masih dalam batas.
- * @param identifier  IP address atau user ID
- * @param limit       Jumlah request maksimal per window
- * @param windowMs    Durasi window dalam milidetik
+ * In-memory fallback rate limiter
  */
 export function checkRateLimit(
   identifier: string,
@@ -42,10 +36,10 @@ export function checkRateLimit(
   windowMs: number,
 ): RateLimitResult {
   const now = Date.now();
-  const existing = store.get(identifier);
+  const existing = inMemoryStore.get(identifier);
 
   if (!existing || existing.resetAt < now) {
-    store.set(identifier, { count: 1, resetAt: now + windowMs });
+    inMemoryStore.set(identifier, { count: 1, resetAt: now + windowMs });
     return { ok: true };
   }
 
@@ -59,7 +53,73 @@ export function checkRateLimit(
 }
 
 /**
- * Ambil identifier dari request: gunakan IP jika ada, fallback ke "anonymous".
+ * Distributed rate limiter untuk route handler (Vercel Serverless).
+ */
+export async function checkRateLimitDistributed(
+  identifier: string,
+  limit: number,
+  windowMs: number,
+): Promise<RateLimitResult> {
+  const windowSec = Math.max(1, Math.ceil(windowMs / 1000));
+  const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
+  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  // 1. Upstash Redis REST
+  if (redisUrl && redisToken) {
+    try {
+      const redisKey = `po_rl:${identifier}`;
+      const res = await fetch(`${redisUrl}/pipeline`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${redisToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify([
+          ["INCR", redisKey],
+          ["EXPIRE", redisKey, windowSec],
+        ]),
+        cache: "no-store",
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const count = Number(data?.[0]?.result || 1);
+        if (count > limit) {
+          return { ok: false, retryAfterSeconds: windowSec };
+        }
+        return { ok: true };
+      }
+    } catch {
+      // lanjut ke Supabase
+    }
+  }
+
+  // 2. Supabase atomic RPC
+  try {
+    const admin = createAdminClient();
+    if (admin) {
+      const { data, error } = await admin.rpc("hit_po_rate_limit", {
+        p_key: identifier,
+        p_window_seconds: windowSec,
+      });
+
+      if (!error && typeof data === "number") {
+        if (data > limit) {
+          return { ok: false, retryAfterSeconds: windowSec };
+        }
+        return { ok: true };
+      }
+    }
+  } catch {
+    // lanjut ke fallback
+  }
+
+  // 3. Fallback ke in-memory
+  return checkRateLimit(identifier, limit, windowMs);
+}
+
+/**
+ * Ambil IP client dari request
  */
 export function getClientIdentifier(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for");

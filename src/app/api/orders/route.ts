@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { checkRateLimit, getClientIdentifier } from "@/lib/rate-limit";
+import { checkRateLimitDistributed, getClientIdentifier } from "@/lib/rate-limit";
 
 // Regex format nomor WA Indonesia: 08xx atau +628xx atau 628xx
 const waRegex = /^(\+62|62|0)8\d{7,13}$/;
@@ -19,18 +19,20 @@ const orderInput = z.object({
   paymentMethod: z.enum(["cod", "transfer_qris", "transfer_bank"]).optional().default("cod"),
   notes: z.string().trim().max(300).optional().default(""),
   requestId: z.string().uuid(),
+  website: z.string().optional(), // Honeypot field for bot trapping
 });
 
 export async function POST(request: Request) {
-  // Rate limit: 10 order per menit per IP
+  // Rate limit terdistribusi per IP (configurable, default 10 order/jam)
   const identifier = getClientIdentifier(request);
-  const rateLimitResult = checkRateLimit(`order:${identifier}`, 10, 60_000);
-  if (!rateLimitResult.ok) {
+  const maxOrderPerHour = Number(process.env.RATE_LIMIT_ORDER_PER_HOUR || 10);
+  const ipLimit = await checkRateLimitDistributed(`order:ip:${identifier}`, maxOrderPerHour, 3600_000);
+  if (!ipLimit.ok) {
     return NextResponse.json(
-      { error: `Terlalu banyak percobaan. Tunggu ${rateLimitResult.retryAfterSeconds} detik lalu coba lagi.` },
+      { error: `Terlalu banyak percobaan order. Tunggu ${ipLimit.retryAfterSeconds} detik lalu coba lagi.` },
       {
         status: 429,
-        headers: { "Retry-After": String(rateLimitResult.retryAfterSeconds) },
+        headers: { "Retry-After": String(ipLimit.retryAfterSeconds) },
       },
     );
   }
@@ -42,7 +44,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: firstError }, { status: 400 });
   }
 
+  // Honeypot check: bot otomatis mengisi input tersembunyi ini
+  if (parsed.data.website) {
+    return NextResponse.json({ error: "Permintaan tidak dapat diproses." }, { status: 400 });
+  }
+
   const { batchId, quantity, buyerName, faculty, whatsapp, paymentMethod, notes, requestId } = parsed.data;
+
+  // Rate limit per nomor WhatsApp (maks 5 order per 15 menit)
+  const waDigits = whatsapp.replace(/\D/g, "");
+  const waLimit = await checkRateLimitDistributed(`order:wa:${waDigits}`, 5, 900_000);
+  if (!waLimit.ok) {
+    return NextResponse.json(
+      { error: "Terlalu banyak pesanan dibuat untuk nomor WhatsApp ini dalam waktu singkat. Tunggu 15 menit." },
+      { status: 429 }
+    );
+  }
 
   const supabase = await createClient();
   const {

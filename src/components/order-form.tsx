@@ -67,6 +67,7 @@ export function OrderForm({
   const [copiedBank, setCopiedBank] = useState(false);
   const [agreedConsent, setAgreedConsent] = useState(true);
   const [orderResult, setOrderResult] = useState<PlacedOrderResult | null>(null);
+  const [honeypot, setHoneypot] = useState("");
 
   const requestRef = useRef<{ fingerprint: string; id: string } | null>(null);
 
@@ -112,6 +113,7 @@ export function OrderForm({
           paymentMethod: paymentMethod === "qris" ? "transfer_qris" : (paymentMethod === "transfer" ? "transfer_bank" : "cod"),
           notes: notes.trim(),
           requestId: requestRef.current.id,
+          website: honeypot,
         }),
       });
 
@@ -162,6 +164,17 @@ export function OrderForm({
   return (
     <>
       <form className="form-stack order-form-card" onSubmit={submit}>
+        {/* Anti-spam Honeypot */}
+        <div style={{ display: "none", position: "absolute", left: "-9999px" }} aria-hidden="true">
+          <input
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+          />
+        </div>
         {!isLoggedIn && (
           <div className="guest-order-notice">
             <span className="notice-icon">⚡</span>
