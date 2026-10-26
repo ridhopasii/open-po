@@ -116,18 +116,18 @@ button { color: inherit; }
 }
 .ecosystem-pill-item.active {
   background: #ffffff;
-  color: #059669;
+  color: var(--usu-emerald, #126B49);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   font-weight: 800;
 }
 .ecosystem-live-badge {
   font-size: 8.5px;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 0.05em;
-  background: #059669;
+  background: var(--usu-emerald, #126B49);
   color: #ffffff;
   padding: 1px 5px;
-  border-radius: 9999px;
+  border-radius: 4px;
   margin-left: 2px;
 }
 .brand-icon-box {
@@ -5122,17 +5122,17 @@ h1, h2, h3, p { margin-top: 0; }
    ========================================================================== */
 
 :root {
-  --usu-emerald: #059669;
-  --usu-emerald-hover: #047857;
-  --polmed-violet: #7c3aed;
-  --polmed-violet-hover: #6d28d9;
+  --usu-emerald: #126B49;
+  --usu-emerald-hover: #0e5238;
+  --polmed-violet: #532b98;
+  --polmed-violet-hover: #3c1c74;
   
-  --bg-page: #f7f8fa;
+  --bg-page: #f8fafc;
   --bg-card: #ffffff;
-  --text-main: #1f2937;
+  --text-main: #111827;
   --text-muted: #64748b;
   --border-ui: #e5e7eb;
-  --border-ui-hover: #059669;
+  --border-ui-hover: #126B49;
   
   --radius-card: 12px;
   --radius-button: 8px;
@@ -5140,7 +5140,7 @@ h1, h2, h3, p { margin-top: 0; }
   
   --shadow-card: 0 1px 4px rgba(0, 0, 0, 0.04);
   --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.08);
-  --shadow-btn: 0 1px 3px rgba(5, 150, 105, 0.2);
+  --shadow-btn: 0 1px 3px rgba(18, 107, 73, 0.2);
 }
 
 body {

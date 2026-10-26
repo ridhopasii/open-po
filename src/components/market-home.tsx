@@ -320,6 +320,12 @@ export function MarketHome({ batches }: { batches: OpenBatch[] }) {
         <Link href="/lacak">Lacak Pesanan</Link>
         <Link href="/cara-kerja">Cara Kerja</Link>
         <Link href="/penjual">Ruang Penjual</Link>
+        <a href="https://www.jualbeliusupolmed.web.id" target="_blank" rel="noopener noreferrer">
+          Jual Beli USU POLMED ↗
+        </a>
+        <a href="https://www.jualbeliusupolmed.web.id/mading" target="_blank" rel="noopener noreferrer">
+          Menfess Kampus ↗
+        </a>
         <span>Medan, Sumatera Utara</span>
       </footer>
     </>

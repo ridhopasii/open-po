@@ -109,6 +109,17 @@ export function OrderForm({
               return prev || saved.whatsapp;
             });
           }
+        } else {
+          // Shared ecosystem identity fallback from Jual Beli USU session
+          const ecosystemWa = localStorage.getItem("seller_wa");
+          const ecosystemName = localStorage.getItem("seller_name");
+          if (ecosystemName) setBuyerName((prev) => prev || ecosystemName);
+          if (ecosystemWa) {
+            setWhatsapp((prev) => {
+              if (!prev) validateWa(ecosystemWa);
+              return prev || ecosystemWa;
+            });
+          }
         }
       }
     } catch {}
@@ -164,6 +175,8 @@ export function OrderForm({
             "openpo_buyer_profile",
             JSON.stringify({ name: buyerName.trim(), faculty: faculty.trim(), whatsapp: whatsapp.trim() })
           );
+          if (!localStorage.getItem("seller_wa")) localStorage.setItem("seller_wa", whatsapp.trim());
+          if (!localStorage.getItem("seller_name")) localStorage.setItem("seller_name", buyerName.trim());
           if (result.order?.order_code) {
             const recent = JSON.parse(localStorage.getItem("openpo_recent_orders") || "[]");
             const updated = [result.order.order_code, ...recent.filter((c: string) => c !== result.order.order_code)].slice(0, 8);
