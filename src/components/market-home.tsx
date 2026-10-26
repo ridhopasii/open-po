@@ -181,72 +181,6 @@ export function MarketHome({ batches }: { batches: OpenBatch[] }) {
 
   return (
     <>
-      {/* Hero Banner Section */}
-      <section className="market-hero">
-        <div className="hero-content">
-          <div className="hero-ticker">
-            <span className="ticker-pulse" />
-            <span className="ticker-label">
-              PRE-ORDER KAMPUS · {batches.length > 0 ? `${batches.length} BATCH AKTIF` : "BATCH SEGERA DIBUKA"} · TITIK AMBIL KAMPUS
-            </span>
-          </div>
-
-          <h1 className="hero-headline">
-            Jajanan, Kopi, & Merchandise Kampus.
-            <span className="hero-gradient-text"> Pre-Order Mudah, Ambil di Selasar.</span>
-          </h1>
-
-          <p className="hero-subhead">
-            Platform pre-order komunitas mahasiswa. Kuota transparan real-time, jadwal ambil pasti di selasar fakultas,
-            dan rekap WhatsApp otomatis tanpa antre.
-          </p>
-
-          <div className="hero-cta-group">
-            <a href="#katalog-po" className="button button-primary">
-              Jelajahi PO Aktif ({batches.length})
-            </a>
-            <Link href="/lacak" className="button button-outline">
-              Lacak Pesanan Saya
-            </Link>
-            <Link href="/penjual" className="button button-ghost">
-              Buka PO Sendiri →
-            </Link>
-          </div>
-
-          {/* Trust Highlights */}
-          <div className="hero-trust-bar">
-            <div className="trust-item">
-              <span className="trust-icon">🛡️</span>
-              <div>
-                <strong>Mahasiswa Terverifikasi</strong>
-                <small>Penjual jelas per fakultas</small>
-              </div>
-            </div>
-            <div className="trust-item">
-              <span className="trust-icon">📍</span>
-              <div>
-                <strong>Titik Ambil Terjamin</strong>
-                <small>FMIPA, Gazebo FK, Perpustakaan</small>
-              </div>
-            </div>
-            <div className="trust-item">
-              <span className="trust-icon">⚡</span>
-              <div>
-                <strong>Tanpa Wajib Akun</strong>
-                <small>Pesan & lacak instan via WA</small>
-              </div>
-            </div>
-            <div className="trust-item">
-              <span className="trust-icon">💬</span>
-              <div>
-                <strong>Rekap WA Otomatis</strong>
-                <small>Format nota langsung siap kirim</small>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Main Catalog Section */}
       <main className="shop-home" id="katalog-po">
         <section className="shop-toolbar" aria-label="Cari produk">
@@ -261,7 +195,7 @@ export function MarketHome({ batches }: { batches: OpenBatch[] }) {
             </div>
             <div className="toolbar-right-actions">
               <Link href="/lacak" className="pill-link">
-                🔍 Cek Status Pesanan
+                Cek Status Pesanan
               </Link>
               <Link href="/cara-kerja" className="how-link">
                 Cara Kerja
