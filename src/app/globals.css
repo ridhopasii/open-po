@@ -77,38 +77,99 @@ button { color: inherit; }
   align-items: center;
   gap: 4px;
 }
-.ecosystem-top-ribbon {
-  min-height: 32px;
-  background: var(--campus-gradient);
+/* === ECOSYSTEM TOP SWITCHER BAR (USU x POLMED) === */
+.ecosystem-switcher-bar {
+  background: #f1f5f9;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 6px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 50;
+}
+.ecosystem-segmented-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 3px;
+  border-radius: 9999px;
+  max-width: 100%;
+}
+.ecosystem-pill-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #64748b;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+.ecosystem-pill-item:hover {
+  color: #1e1b2e;
+  background: rgba(255, 255, 255, 0.5);
+}
+.ecosystem-pill-item.active {
+  background: #ffffff;
+  color: #059669;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  font-weight: 800;
+}
+.ecosystem-live-badge {
+  font-size: 8.5px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  background: #059669;
   color: #ffffff;
+  padding: 1px 5px;
+  border-radius: 9999px;
+  margin-left: 2px;
+}
+.brand-icon-box {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(5, 150, 105, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11.5px;
-  font-weight: 700;
-  padding: 6px 16px;
-  position: relative;
-  z-index: 50;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  flex-shrink: 0;
 }
-.ecosystem-top-ribbon a {
-  display: inline-flex;
+.brand-title-row {
+  display: flex;
   align-items: center;
   gap: 6px;
-  color: #ffffff;
-  transition: opacity 0.2s ease;
 }
-.ecosystem-top-ribbon a:hover {
-  opacity: 0.92;
-  text-decoration: underline;
+.brand-campus-pill {
+  font-size: 8.5px;
+  font-weight: 800;
+  color: #059669;
+  background: rgba(5, 150, 105, 0.12);
+  border: 1px solid rgba(5, 150, 105, 0.25);
+  padding: 1px 6px;
+  border-radius: 9999px;
+  letter-spacing: 0.02em;
 }
-.ecosystem-top-ribbon .divider-dot {
-  display: inline-block;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.6);
-  margin: 0 10px;
+.button-po-sell {
+  background: linear-gradient(135deg, #059669 0%, #0d9488 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 9999px !important;
+  padding: 7px 16px !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3) !important;
+  transition: all 0.2s ease !important;
+}
+.button-po-sell:hover {
+  filter: brightness(1.08) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4) !important;
 }
 
 .site-header { background: var(--paper-light); }

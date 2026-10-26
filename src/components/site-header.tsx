@@ -27,63 +27,107 @@ export async function SiteHeader() {
 
   return (
     <header className="site-header">
-      {/* Universal Ecosystem Top Ribbon: USU x POLMED */}
-      <div className="ecosystem-top-ribbon">
-        <a href="https://jualbeliusupolmed.web.id" target="_blank" rel="noopener noreferrer">
-          <span>🛍️ ← Ke Pasar Barang Bekas &amp; Menfess USU-Polmed</span>
-        </a>
-        <span className="divider-dot" aria-hidden="true" />
-        <span style={{ opacity: 0.95 }}>🍵 Open PO Kampus (Aktif)</span>
+      {/* Universal Ecosystem Segment Switcher: USU x POLMED */}
+      <div className="ecosystem-switcher-bar">
+        <div className="ecosystem-segmented-wrap">
+          <a
+            href="https://www.jualbeliusupolmed.web.id"
+            className="ecosystem-pill-item"
+            title="Ke Marketplace Barang Bekas"
+          >
+            <span className="icon">🛍️</span>
+            <span>Marketplace</span>
+          </a>
+          <div
+            className="ecosystem-pill-item active"
+            title="Sedang di Open PO Kampus"
+          >
+            <span className="icon">🍵</span>
+            <span>Open PO</span>
+            <span className="ecosystem-live-badge">AKTIF</span>
+          </div>
+          <a
+            href="https://www.jualbeliusupolmed.web.id/mading"
+            className="ecosystem-pill-item"
+            title="Ke Curhat & Menfess Kampus"
+          >
+            <span className="icon">💖</span>
+            <span>Curhat &amp; Menfess</span>
+          </a>
+        </div>
       </div>
 
       <div className="nav-wrap">
-        <Link href="/" className="brand" aria-label="OpenPO by kampusfess.id, beranda">
-          <BrandMark />
-          <span className="brand-copy">
-            <span className="brand-name">OpenPO</span>
-            <small>by kampusfess.id</small>
-          </span>
+        <Link href="/" className="brand" aria-label="Kampusfess Open PO USU POLMED">
+          <div className="brand-icon-box">
+            <svg
+              className="w-5 h-5 text-emerald-600"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+          </div>
+          <div className="brand-copy">
+            <div className="brand-title-row">
+              <span className="brand-name">Kampusfess</span>
+              <span className="brand-campus-pill">OPEN PO</span>
+            </div>
+            <small>Marketplace USU • POLMED</small>
+          </div>
         </Link>
+
         <nav className="desktop-nav" aria-label="Navigasi utama">
           <Link href="/">Jelajah PO</Link>
           <Link href="/lacak" className="nav-highlight">Lacak Pesanan</Link>
           <Link href="/cara-kerja">Cara Kerja</Link>
         </nav>
+
         <div className="nav-actions">
           {user ? (
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <Link className="nav-login" href="/akun/pesanan">
                 Pesananku
               </Link>
-              <Link className="button button-small" href="/penjual">
-                Ruang Penjual
+              <Link className="button button-po-sell" href="/penjual">
+                <span>+ Buka Open PO</span>
               </Link>
               <LogoutButton className="button button-light button-small" />
             </div>
           ) : (
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <Link className="nav-login" href="/masuk?next=%2Fakun%2Fpesanan">
                 Masuk
               </Link>
-              <Link className="button button-small" href="/penjual">
-                Jual di OpenPO
+              <Link className="button button-po-sell" href="/penjual">
+                <span>+ Buka Open PO</span>
               </Link>
             </div>
           )}
         </div>
       </div>
+
       <nav className="mobile-nav" aria-label="Navigasi cepat">
         <Link href="/" className="mobile-nav-link">
-          <MobileNavIcon kind="browse" />Jelajah
+          <MobileNavIcon kind="browse" />
+          <span>Jelajah</span>
         </Link>
         <Link href="/lacak" className="mobile-nav-link">
-          <MobileNavIcon kind="track" />Lacak PO
+          <MobileNavIcon kind="track" />
+          <span>Lacak</span>
         </Link>
         <Link href={user ? "/akun/pesanan" : "/masuk?next=%2Fakun%2Fpesanan"} className="mobile-nav-link">
-          <MobileNavIcon kind="orders" />Pesanan
+          <MobileNavIcon kind="orders" />
+          <span>Pesanan</span>
         </Link>
         <Link href="/penjual" className="mobile-nav-link mobile-nav-sell">
-          <MobileNavIcon kind="sell" />Jual
+          <MobileNavIcon kind="sell" />
+          <span>Buka PO</span>
         </Link>
         {user && (
           <LogoutButton
