@@ -6,6 +6,7 @@ import { AdminDashboard } from "@/components/admin-dashboard";
 import { SiteHeader } from "@/components/site-header";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { verifyAdminSession } from "@/lib/admin-auth";
 import {
   AdminBatch,
   AdminOrder,
@@ -18,6 +19,10 @@ import {
 export const metadata: Metadata = {
   title: "Superadmin Control Center · OpenPO",
   description: "Pusat kendali, moderasi batch PO, kelola penjual, dan audit pesanan se-kampus.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export const instant = false;
@@ -25,25 +30,10 @@ export const instant = false;
 export default async function AdminPage() {
   await connection();
 
-  // 🔒 Keamanan: Cek cookie sesi admin atau login user admin
-  const cookieStore = await cookies();
-  const adminCookie = cookieStore.get("openpo_admin_token");
-  let isAuthenticated = adminCookie?.value === "admin_authenticated_session";
+  // 🔒 Keamanan: Cek sesi admin melalui token bertanda tangan atau peran Supabase
+  const { authorized: isAuthenticated } = await verifyAdminSession();
 
-  if (!isAuthenticated) {
-    try {
-      const supabaseUser = await createClient();
-      const { data } = await supabaseUser.auth.getUser();
-      const adminEmail = process.env.ADMIN_EMAIL || "admin@openpo.id";
-      if (data?.user?.email?.toLowerCase() === adminEmail.toLowerCase()) {
-        isAuthenticated = true;
-      }
-    } catch {
-      // Belum masuk
-    }
-  }
-
-  // Jika belum diautentikasi dengan kata sandi admin -> Tampilkan Layar Kunci
+  // Jika belum diautentikasi dengan hak admin -> Tampilkan Layar Kunci Login
   if (!isAuthenticated) {
     return (
       <div className="page-shell">

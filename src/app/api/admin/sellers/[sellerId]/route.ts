@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { verifyAdminSession, logAdminAudit } from "@/lib/admin-auth";
+import { getClientIdentifier } from "@/lib/rate-limit";
 
 const input = z.object({
   verified: z.boolean().optional(),
@@ -14,6 +16,11 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ sellerId: string }> },
 ) {
+  const auth = await verifyAdminSession();
+  if (!auth.authorized) {
+    return NextResponse.json({ error: "Akses ditolak. Sesi admin diperlukan." }, { status: 401 });
+  }
+
   const supabase = createAdminClient();
   if (!supabase) {
     return NextResponse.json({ error: "Koneksi admin database belum disiapkan." }, { status: 500 });
@@ -38,13 +45,27 @@ export async function PATCH(
     return NextResponse.json({ error: error.message }, { status: 409 });
   }
 
+  await logAdminAudit({
+    actor: auth.actor,
+    action: "admin_update_seller",
+    targetType: "po_sellers",
+    targetId: sellerId,
+    details: updates,
+    ipAddress: getClientIdentifier(request),
+  });
+
   return NextResponse.json({ ok: true });
 }
 
 export async function DELETE(
-  _req: Request,
+  request: Request,
   { params }: { params: Promise<{ sellerId: string }> },
 ) {
+  const auth = await verifyAdminSession();
+  if (!auth.authorized) {
+    return NextResponse.json({ error: "Akses ditolak. Sesi admin diperlukan." }, { status: 401 });
+  }
+
   const supabase = createAdminClient();
   if (!supabase) {
     return NextResponse.json({ error: "Koneksi admin database belum disiapkan." }, { status: 500 });
@@ -61,6 +82,15 @@ export async function DELETE(
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 409 });
   }
+
+  await logAdminAudit({
+    actor: auth.actor,
+    action: "admin_suspend_seller",
+    targetType: "po_sellers",
+    targetId: sellerId,
+    details: { suspended: true },
+    ipAddress: getClientIdentifier(request),
+  });
 
   return NextResponse.json({ ok: true, message: "Akun penjual telah disuspend." });
 }

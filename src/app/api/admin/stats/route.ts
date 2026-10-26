@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { verifyAdminSession } from "@/lib/admin-auth";
 
 export async function GET() {
+  const auth = await verifyAdminSession();
+  if (!auth.authorized) {
+    return NextResponse.json({ error: "Akses ditolak. Sesi admin diperlukan." }, { status: 401 });
+  }
+
   const supabase = createAdminClient();
   if (!supabase) {
     return NextResponse.json({ error: "Koneksi admin database belum disiapkan." }, { status: 500 });

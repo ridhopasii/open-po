@@ -7,9 +7,15 @@ import { SiteHeader } from "@/components/site-header";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { formatRupiah } from "@/lib/marketplace-shared";
 
+import { verifyAdminSession } from "@/lib/admin-auth";
+
 export const metadata: Metadata = {
   title: "Superadmin · OpenPO",
   description: "Panel kontrol operasional platform OpenPO.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 type PlatformStats = {
@@ -69,9 +75,8 @@ async function getStats(): Promise<PlatformStats | null> {
 export default async function SuperadminPage() {
   await connection();
 
-  const cookieStore = await cookies();
-  const adminCookie = cookieStore.get("openpo_admin_token");
-  if (adminCookie?.value !== "admin_authenticated_session") {
+  const { authorized } = await verifyAdminSession();
+  if (!authorized) {
     redirect("/admin");
   }
 

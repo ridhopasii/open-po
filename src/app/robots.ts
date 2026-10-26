@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/akun/", "/auth/"],
+      disallow: ["/api/", "/akun/", "/auth/", "/admin", "/superadmin"],
     },
     sitemap: "https://open-po.vercel.app/sitemap.xml",
   };
