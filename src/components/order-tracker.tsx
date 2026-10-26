@@ -83,9 +83,11 @@ function sanitizeWa(phone: string) {
 
 export function OrderTracker() {
   const searchParams = useSearchParams();
-  const initialQuery = searchParams.get("kode") || searchParams.get("q") || "";
+  const initialCode = searchParams.get("kode") || searchParams.get("q") || searchParams.get("code") || "";
+  const initialPhone = searchParams.get("phone") || searchParams.get("wa") || "";
 
-  const [query, setQuery] = useState(initialQuery);
+  const [codeQuery, setCodeQuery] = useState(initialCode);
+  const [phoneLast4, setPhoneLast4] = useState(initialPhone.slice(-4));
   const [orders, setOrders] = useState<TrackedOrder[]>([]);
   const [busy, setBusy] = useState(false);
   const [searched, setSearched] = useState(false);
@@ -101,16 +103,24 @@ export function OrderTracker() {
     } catch {}
   }, []);
 
-  async function handleSearch(qText: string) {
-    const term = qText.trim();
-    if (!term) return;
+  async function handleSearch(codeText: string, phoneText: string) {
+    const cleanCode = codeText.trim().toUpperCase();
+    const cleanPhone = phoneText.trim().replace(/\D/g, "").slice(-4);
+    if (!cleanCode) {
+      setErrorMessage("Masukkan Kode Pesanan kamu.");
+      return;
+    }
+    if (cleanPhone.length < 4) {
+      setErrorMessage("Masukkan 4 digit terakhir nomor WhatsApp pemesan untuk verifikasi.");
+      return;
+    }
 
     setBusy(true);
     setErrorMessage("");
     setSearched(true);
 
     try {
-      const res = await fetch(`/api/orders/track?q=${encodeURIComponent(term)}`);
+      const res = await fetch(`/api/orders/track?code=${encodeURIComponent(cleanCode)}&phone=${encodeURIComponent(cleanPhone)}`);
       const data = await res.json();
       if (!res.ok) {
         setErrorMessage(data.error || "Gagal memuat status pesanan.");
@@ -127,42 +137,55 @@ export function OrderTracker() {
   }
 
   useEffect(() => {
-    if (initialQuery) {
-      handleSearch(initialQuery);
+    if (initialCode && initialPhone.length >= 4) {
+      handleSearch(initialCode, initialPhone);
     }
-  }, [initialQuery]);
+  }, [initialCode, initialPhone]);
 
   return (
     <div className="tracker-container">
       <div className="tracker-hero">
-        <span className="section-label">LIVE TRACKING KAMPUS · TANPA LOGIN</span>
-        <h1>Lacak Status Pesanan PO</h1>
+        <span className="section-label">LIVE TRACKING KAMPUS · PRIVASI TERJAMIN</span>
+        <h1>Lacak Status Pesanan OpenPO</h1>
         <p>
-          <strong>Tidak perlu repot buat akun!</strong> Cukup masukkan <strong>Kode Pesanan</strong> (format: <code>PO-XXXXXX</code>) atau <strong>Nomor WhatsApp</strong> yang kamu pakai saat memesan untuk cek perkembangan pesananmu realtime.
+          Masukkan <strong>Kode Pesanan</strong> dan <strong>4 Digit Terakhir WhatsApp</strong> yang kamu pakai saat memesan untuk melihat status perkembangan pesananmu realtime.
         </p>
 
         <form
           className="tracker-search-box"
+          style={{ display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: "center" }}
           onSubmit={(e) => {
             e.preventDefault();
-            handleSearch(query);
+            handleSearch(codeQuery, phoneLast4);
           }}
         >
-          <div className="tracker-input-wrap">
+          <div className="tracker-input-wrap" style={{ flex: "1 1 240px", minWidth: "220px" }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.35-4.35" />
             </svg>
             <input
               type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Masukkan Kode Pesanan (contoh: PO-XXXXXX) atau No. WA"
+              value={codeQuery}
+              onChange={(e) => setCodeQuery(e.target.value)}
+              placeholder="Kode Pesanan (PO-XXXXXXXXXX)"
               required
             />
           </div>
-          <button type="submit" className="button" disabled={busy || !query.trim()}>
-            {busy ? "Mencari…" : "Lacak Sekarang"}
+          <div className="tracker-input-wrap" style={{ flex: "0 1 180px", minWidth: "150px" }}>
+            <input
+              type="text"
+              inputMode="numeric"
+              maxLength={4}
+              value={phoneLast4}
+              onChange={(e) => setPhoneLast4(e.target.value.replace(/\D/g, ""))}
+              placeholder="4 digit akhir WA"
+              title="4 digit terakhir nomor WhatsApp pemesan"
+              required
+            />
+          </div>
+          <button type="submit" className="button" disabled={busy || !codeQuery.trim() || phoneLast4.length < 4}>
+            {busy ? "Mencari…" : "Lacak Pesanan"}
           </button>
         </form>
 
@@ -178,8 +201,10 @@ export function OrderTracker() {
                 className="button button-small button-light"
                 style={{ minHeight: "30px", padding: "0 10px", fontSize: "11.5px", fontWeight: 700, borderRadius: "99px" }}
                 onClick={() => {
-                  setQuery(code);
-                  handleSearch(code);
+                  setCodeQuery(code);
+                  if (phoneLast4.length >= 4) {
+                    handleSearch(code, phoneLast4);
+                  }
                 }}
               >
                 {code}

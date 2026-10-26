@@ -95,6 +95,30 @@ export default async function OrderPage({ params }: PageProps) {
   const heroPhoto = getProductPhoto(batch.product.name, batch.photo);
   const percentBooked = Math.min(100, Math.round((batch.reserved_quantity / batch.quota) * 100));
 
+  const now = new Date();
+  const closesAtDate = new Date(batch.closes_at);
+  const pickupAtDate = new Date(batch.pickup_at);
+  const msToClose = closesAtDate.getTime() - now.getTime();
+  const hoursToClose = msToClose / (1000 * 60 * 60);
+
+  let statusBadgeLabel = "Batch Aktif";
+  let statusBadgeBg = "var(--color-primary, #059669)";
+
+  if (batch.status === "picked_up" || (pickupAtDate < now && batch.status === "closed")) {
+    statusBadgeLabel = "Selesai (Sudah Diambil)";
+    statusBadgeBg = "#64748b";
+  } else if (batch.status === "closed" || msToClose <= 0 || remaining <= 0) {
+    statusBadgeLabel = "PO Ditutup";
+    statusBadgeBg = "#dc2626";
+  } else if (hoursToClose <= 24 && hoursToClose > 0) {
+    const hoursLeft = Math.max(1, Math.ceil(hoursToClose));
+    statusBadgeLabel = `⚡ Segera Tutup (<${hoursLeft} Jam)`;
+    statusBadgeBg = "#d97706";
+  } else if (batch.status === "upcoming") {
+    statusBadgeLabel = "Segera Dibuka";
+    statusBadgeBg = "#2563eb";
+  }
+
   return (
     <div className="page-shell">
       <SiteHeader />
@@ -119,8 +143,8 @@ export default async function OrderPage({ params }: PageProps) {
                   priority
                   className="object-cover"
                 />
-                <div className="detail-photo-badge">
-                  <span>Batch Aktif</span>
+                <div className="detail-photo-badge" style={{ backgroundColor: statusBadgeBg }}>
+                  <span>{statusBadgeLabel}</span>
                   <strong>{batch.reserved_quantity} / {batch.quota} Terpesan</strong>
                 </div>
               </div>
@@ -128,7 +152,9 @@ export default async function OrderPage({ params }: PageProps) {
 
             <div className="detail-category-header">
               <span className="section-label">{batch.product.category.toUpperCase()} · OPEN PO MAHASISWA</span>
-              <span className="quota-tag-chip">{percentBooked}% Kuota Terisi</span>
+              <span className="quota-tag-chip" style={{ backgroundColor: remaining <= 5 ? "#fef3c7" : undefined, color: remaining <= 5 ? "#b45309" : undefined }}>
+                {percentBooked}% Kuota Terisi ({remaining} sisa)
+              </span>
             </div>
 
             <h1 className="detail-product-title">{batch.product.name}</h1>
@@ -178,11 +204,11 @@ export default async function OrderPage({ params }: PageProps) {
             <div className="detail-facts">
               <div>
                 <span>BATAS PEMESANAN</span>
-                <strong>{formatCampusDate(batch.closes_at, { year: "numeric" })}</strong>
+                <strong>{formatCampusDate(batch.closes_at, { year: "numeric" })} WIB</strong>
               </div>
               <div>
                 <span>JADWAL PENGAMBILAN</span>
-                <strong>{formatCampusDate(batch.pickup_at, { year: "numeric" })}</strong>
+                <strong>{formatCampusDate(batch.pickup_at, { year: "numeric" })} WIB</strong>
               </div>
               <div>
                 <span>TITIK AMBIL DI KAMPUS</span>

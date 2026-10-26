@@ -129,9 +129,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Mohon maaf, kuota PO baru saja terisi penuh oleh pemesan lain." }, { status: 400 });
   }
 
-  // 4. Buat record pesanan
+  // 4. Buat record pesanan dengan kode Base32 (10 karakter acak) dan batas bayar 2 jam
   const price = batch.product?.price_idr || 0;
-  const orderCode = `PO-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
+  const base32Chars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+  let randomPart = "";
+  for (let i = 0; i < 10; i++) {
+    randomPart += base32Chars.charAt(Math.floor(Math.random() * base32Chars.length));
+  }
+  const orderCode = `PO-${randomPart}`;
+  const expiresAt = new Date(Date.now() + 2 * 3600 * 1000).toISOString();
+
+  // Bersihkan pesanan kedaluwarsa secara oportunitis (aman-gagal)
+  try {
+    await admin.rpc("release_expired_po_orders");
+  } catch {}
 
   const { data: newOrder, error: oErr } = await admin
     .from("po_orders")
@@ -148,8 +159,9 @@ export async function POST(request: Request) {
       notes: notes.trim(),
       client_request_id: requestId,
       status: "pending",
+      expires_at: expiresAt,
     })
-    .select("id,order_code,quantity,unit_price_idr,total_price_idr,status,payment_method,notes")
+    .select("id,order_code,quantity,unit_price_idr,total_price_idr,status,payment_method,notes,expires_at")
     .single();
 
   if (oErr || !newOrder) {

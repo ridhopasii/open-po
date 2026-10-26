@@ -3,24 +3,29 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { checkRateLimitDistributed, getClientIdentifier } from "@/lib/rate-limit";
 
 function maskName(name: string): string {
-  if (!name) return "Pembeli";
+  if (!name) return "Pe***";
   const parts = name.trim().split(/\s+/);
-  return parts
-    .map((p) => (p.length > 2 ? `${p[0]}${"*".repeat(p.length - 2)}${p[p.length - 1]}` : `${p[0]}*`))
-    .join(" ");
+  if (parts.length === 1) {
+    const p = parts[0];
+    return p.length > 2 ? `${p.slice(0, 2)}***` : `${p[0]}*`;
+  }
+  const first = parts[0];
+  const firstMasked = first.length > 2 ? `${first.slice(0, 2)}***` : `${first}*`;
+  const lastInitial = parts[parts.length - 1][0].toUpperCase() + ".";
+  return `${firstMasked} ${lastInitial}`;
 }
 
 function maskPhone(phone: string): string {
   if (!phone) return "";
   const digits = phone.replace(/\D/g, "");
-  if (digits.length < 7) return "****";
+  if (digits.length < 8) return "****";
   const start = digits.slice(0, 4);
-  const end = digits.slice(-3);
-  return `${start}${"*".repeat(Math.max(2, digits.length - 7))}${end}`;
+  const end = digits.slice(-4);
+  return `${start}****${end}`;
 }
 
 export async function GET(request: Request) {
-  // Rate limit: 20 percobaan per jam per IP (configurable)
+  // Rate limit: 20 percobaan per jam per IP
   const ip = getClientIdentifier(request);
   const maxTrackPerHour = Number(process.env.RATE_LIMIT_TRACK_MAX || 20);
   const rl = await checkRateLimitDistributed(`track:${ip}`, maxTrackPerHour, 3600_000);
@@ -32,11 +37,14 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const q = searchParams.get("q")?.trim() || "";
+  const codeParam = (searchParams.get("code") || searchParams.get("q") || "").trim().toUpperCase();
+  const phoneParam = (searchParams.get("phone") || searchParams.get("phone_last4") || searchParams.get("wa") || "").trim();
 
-  if (!q || q.length < 4) {
+  // Memerlukan kode pesanan dan 4 digit terakhir nomor WhatsApp
+  const phoneDigits = phoneParam.replace(/\D/g, "");
+  if (!codeParam || phoneDigits.length < 4) {
     return NextResponse.json(
-      { error: "Masukkan minimal 4 karakter kode pesanan atau nomor WhatsApp lengkap." },
+      { error: "Masukkan Kode Pesanan dan 4 digit terakhir nomor WhatsApp kamu demi menjaga privasi pemesan." },
       { status: 400 }
     );
   }
@@ -46,13 +54,12 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Sistem database tidak siap." }, { status: 500 });
   }
 
-  const cleanQuery = q.toUpperCase();
-  const phoneDigits = q.replace(/\D/g, "");
+  const last4 = phoneDigits.slice(-4);
 
-  let query = admin
+  const { data: order, error } = await admin
     .from("po_orders")
     .select(
-      "id,order_code,buyer_name,buyer_faculty,buyer_whatsapp,quantity,unit_price_idr,total_price_idr,status,created_at," +
+      "id,order_code,buyer_name,buyer_faculty,buyer_whatsapp,quantity,unit_price_idr,total_price_idr,status,payment_method,payment_proof_path,notes,created_at,expires_at," +
       "batch:po_batches!inner(" +
       "  id,title,closes_at,pickup_at,pickup_point,pickup_note,status," +
       "  product:po_products!inner(" +
@@ -61,34 +68,25 @@ export async function GET(request: Request) {
       "  )" +
       ")"
     )
-    .order("created_at", { ascending: false })
-    .limit(10);
+    .eq("order_code", codeParam)
+    .maybeSingle();
 
-  // If search query is predominantly digits, treat as WhatsApp search (requires >= 10 digits to prevent broad scraping)
-  if (phoneDigits.length >= 10) {
-    query = query.ilike("buyer_whatsapp", `%${phoneDigits.slice(-9)}%`);
-  } else if (cleanQuery.startsWith("PO-") && cleanQuery.length >= 7) {
-    query = query.eq("order_code", cleanQuery);
-  } else {
+  // Pesan galat seragam jika kode tidak ditemukan ATAU 4 digit nomor WA tidak cocok (mencegah enumerasi / timing attack)
+  const orderData = order as any;
+  const buyerWaDigits = (orderData?.buyer_whatsapp || "").replace(/\D/g, "");
+  if (error || !orderData || !buyerWaDigits.endsWith(last4)) {
     return NextResponse.json(
-      { error: "Gunakan kode pesanan lengkap (contoh: PO-XXXXXX) atau minimal 10 digit nomor WhatsApp." },
-      { status: 400 }
+      { error: "Pesanan dengan kode dan 4 digit nomor WhatsApp tersebut tidak ditemukan. Mohon periksa kembali data pesananmu." },
+      { status: 404 }
     );
   }
 
-  const { data, error } = await query;
+  // Sanitasi data pribadi (nama: Ra*** M., nomor WA: 0812****4321)
+  const sanitizedOrder = {
+    ...orderData,
+    buyer_name: maskName(orderData.buyer_name),
+    buyer_whatsapp: maskPhone(orderData.buyer_whatsapp),
+  };
 
-  if (error) {
-    return NextResponse.json({ error: "Gagal mencari pesanan: " + error.message }, { status: 500 });
-  }
-
-  // Mask sensitive personal data to protect buyer privacy
-  const orderList = (data as any[]) || [];
-  const sanitizedOrders = orderList.map((order: any) => ({
-    ...order,
-    buyer_name: maskName(order.buyer_name),
-    buyer_whatsapp: maskPhone(order.buyer_whatsapp),
-  }));
-
-  return NextResponse.json({ orders: sanitizedOrders });
+  return NextResponse.json({ orders: [sanitizedOrder] });
 }

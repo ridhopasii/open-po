@@ -23,6 +23,12 @@ const batchInput = z.object({
   pickupAt: z.string().datetime(),
   pickupPoint: z.string().trim().min(2).max(160),
   pickupNote: z.string().trim().max(300).default(""),
+}).refine((data) => new Date(data.closesAt).getTime() > Date.now(), {
+  message: "Batas waktu tutup PO harus berada di masa depan.",
+  path: ["closesAt"],
+}).refine((data) => new Date(data.closesAt).getTime() < new Date(data.pickupAt).getTime(), {
+  message: "Batas tutup PO harus lebih awal sebelum jadwal pengambilan barang.",
+  path: ["pickupAt"],
 });
 
 export async function POST(request: Request) {

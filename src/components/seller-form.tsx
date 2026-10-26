@@ -78,6 +78,17 @@ export function SellerForm({
 
     const form = new FormData(event.currentTarget);
 
+    if (new Date(closesAt).getTime() <= Date.now()) {
+      setMessage("Batas waktu tutup PO harus berada di masa depan.");
+      setBusy(false);
+      return;
+    }
+    if (new Date(closesAt).getTime() >= new Date(pickupAt).getTime()) {
+      setMessage("Batas tutup PO harus lebih awal sebelum jadwal pengambilan barang.");
+      setBusy(false);
+      return;
+    }
+
     try {
       const pName = productName.trim();
       const response = await fetch("/api/seller/batches", {

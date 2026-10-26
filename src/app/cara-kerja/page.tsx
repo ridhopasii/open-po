@@ -71,24 +71,28 @@ const FAQS = [
     a: "OpenPO sepenuhnya gratis selama masa peluncuran. Penjual dapat membuka batch PO tanpa potongan komisi awal, dan dana penjualan langsung masuk ke rekening/QRIS penjual.",
   },
   {
-    q: "Bagaimana jika penjual tidak memenuhi pesanan?",
-    a: "Setiap penjual diverifikasi melalui nomor WhatsApp aktif dan fakultas asal. Pembeli dapat menghubungi penjual langsung, dan tim komunitas dapat menindaklanjuti batch yang bermasalah.",
+    q: "Bagaimana jika penjual membatalkan pesanan atau tidak memenuhi kuota?",
+    a: "Penjual wajib mengembalikan dana (refund 100%) kepada pembeli jika batch PO dibatalkan atau barang tidak sesuai kesepakatan. Setiap penjual diwajibkan memiliki lencana mahasiswa terverifikasi (KTM / email kampus) dan kontak WhatsApp aktif untuk transparansi.",
+  },
+  {
+    q: "Bagaimana sistem verifikasi mahasiswa di OpenPO?",
+    a: "Penjual mahasiswa memverifikasi identitas menggunakan Kartu Tanda Mahasiswa (KTM) atau email institusi kampus (@usu.ac.id / @polmed.ac.id) untuk mendapatkan lencana Terverifikasi Kampus, sehingga pembeli aman dari akun bodong.",
   },
   {
     q: "Apakah saya harus membuat akun untuk memesan?",
-    a: "Tidak! Kamu bisa pesan tanpa akun dengan mengisi nama dan nomor WhatsApp. Buat akun hanya jika ingin lacak semua pesanan dalam satu dashboard.",
+    a: "Tidak! Kamu bisa memesan secara instan tanpa akun hanya dengan nama dan nomor WhatsApp aktif. Pesanan langsung tercatat dengan kode unik yang bisa dilacak realtime.",
   },
   {
     q: "Produk apa saja yang bisa dijual?",
-    a: "Semua produk yang legal dan lazim dijual di lingkungan kampus: makanan/minuman buatan sendiri, merchandise angkatan, baju wisuda, kerajinan, dan lainnya.",
+    a: "Produk legal dan layak komunitas: makanan/minuman higienis buatan sendiri, merchandise angkatan, kaos kepanitiaan, buket wisuda, buku kuliah, dan kerajinan mahasiswa. Dilarang keras menjual rokok, vape, miras, dan barang terlarang.",
   },
   {
     q: "Apakah ada batas kuota maksimum?",
-    a: "Tidak ada batas yang ditetapkan platform. Penjual bebas menentukan kuota sesuai kapasitas produksinya.",
+    a: "Tidak ada batas dari platform. Penjual bebas menentukan kuota produksi dan sistem OpenPO akan otomatis mengunci kuota agar pesanan tidak melebihi kapasitas (anti-overselling).",
   },
   {
     q: "Bagaimana sistem lacak pesanan bekerja?",
-    a: "Setiap pesanan mendapat kode unik (contoh: PO-A3XKBQ). Masukkan kode tersebut di halaman /lacak untuk melihat status realtime dan timeline pengiriman.",
+    a: "Setiap pesanan mendapat kode unik 10 karakter Base32. Buka halaman /lacak lalu masukkan kode pesanan dan 4 digit terakhir nomor WhatsApp pemesan untuk melihat status dan jadwal pengambilan secara aman.",
   },
 ];
 

@@ -1,5 +1,6 @@
 export type OpenBatch = {
   id: string; title: string; quota: number; reserved_quantity: number; closes_at: string; pickup_at: string; pickup_point: string; pickup_note: string;
+  status?: string;
   product: { id: string; name: string; description: string; category: string; price_idr: number; seller: { display_name: string; faculty: string; avatar_path?: string | null } };
   photo?: string;
   is_sample?: boolean;
