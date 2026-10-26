@@ -4,8 +4,11 @@ import { SiteHeader } from "@/components/site-header";
 import { OrderTracker } from "@/components/order-tracker";
 
 export const metadata: Metadata = {
-  title: "Lacak Pesanan PO Kampus · OpenPO",
+  title: "Lacak Pesanan PO Kampus",
   description: "Cek status real-time pesanan pre-order kampusmu, jadwal pengambilan di selasar, dan kontak penjual.",
+  alternates: {
+    canonical: "https://open-po.vercel.app/lacak",
+  },
 };
 
 export default function TrackPage() {

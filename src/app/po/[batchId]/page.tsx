@@ -22,9 +22,48 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   await connection();
   const { batchId } = await params;
   const batch = await getOpenBatch(batchId);
+  if (!batch) {
+    return {
+      title: "Detail PO Kampus",
+      alternates: { canonical: `https://open-po.vercel.app/po/${batchId}` },
+    };
+  }
+
+  const title = `${batch.product.name} (PO)`;
+  const description =
+    batch.product.description ||
+    `Pre-order ${batch.product.name} di OpenPO Kampus. Pesan sekarang dan ambil di selasar kampus.`;
+  const photo = getProductPhoto(batch.product.name, batch.photo);
+  const imageUrl = photo.startsWith("http") ? photo : `https://open-po.vercel.app${photo}`;
+
   return {
-    title: batch ? `${batch.product.name} (PO) · OpenPO Kampus` : "Detail PO Kampus",
-    description: batch?.product.description,
+    title,
+    description,
+    alternates: {
+      canonical: `https://open-po.vercel.app/po/${batchId}`,
+    },
+    openGraph: {
+      title: `${title} · OpenPO`,
+      description,
+      url: `https://open-po.vercel.app/po/${batchId}`,
+      siteName: "OpenPO by kampusfess.id",
+      locale: "id_ID",
+      type: "website",
+      images: [
+        {
+          url: imageUrl,
+          width: 800,
+          height: 600,
+          alt: batch.product.name,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} · OpenPO`,
+      description,
+      images: [imageUrl],
+    },
   };
 }
 
