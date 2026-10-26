@@ -5552,14 +5552,30 @@ body::before {
 }
 
 /* ==========================================================================
-   DETAIL & ASIDE CARDS
+   DETAIL, ASIDE, CONFIRMATION & MODAL CARDS
    ========================================================================== */
 .detail-copy,
 .order-card-aside,
 .detail-seller-card,
 .detail-policy-card,
-.detail-facts {
+.detail-facts,
+.detail-note-card,
+.order-confirm-card,
+.order-confirm-header,
+.order-modal-card,
+.buyer-order-card,
+.order-form-card,
+.track-card,
+.seller-card,
+.admin-card {
   border-radius: 22px !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03) !important;
+}
+
+.order-modal-card {
+  border-radius: 24px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
 }
 
 .detail-hero-photo {
@@ -5579,5 +5595,21 @@ body::before {
   font-weight: 700 !important;
   font-size: 11px !important;
   padding: 3px 10px !important;
+}
+
+/* Button WA & Haptic scale */
+.button-wa {
+  background: #25d366 !important;
+  color: #ffffff !important;
+  border: 1px solid #25d366 !important;
+  border-radius: 9999px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(37, 211, 102, 0.25) !important;
+}
+.button-wa:hover {
+  background: #20bd5a !important;
+  border-color: #20bd5a !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35) !important;
 }
 
