@@ -18,7 +18,7 @@ export function SharePoButton({
     ? `${window.location.origin}/po/${batchId}`
     : `https://open-po.vercel.app/po/${batchId}`;
 
-  const shareText = `🔥 Ada Open PO "${title}" di Kampus! Sisa ${remaining} item lagi. Pesan di sini sebelum ditutup: ${url}`;
+  const shareText = `Ada Open PO "${title}" di Kampus! Sisa ${remaining} item lagi. Pesan di sini sebelum ditutup: ${url}`;
   const waUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
 
   async function handleCopy() {
@@ -61,25 +61,25 @@ export function SharePoButton({
           display: "inline-flex",
           alignItems: "center",
           gap: "6px",
-          borderRadius: "10px",
+          borderRadius: "9999px",
         }}
       >
-        <span>Bagikan ke WA &amp; Story</span>
+        <span>Bagikan ke WA</span>
       </a>
 
       <button
         type="button"
-        onClick={handleCopy}
+        onClick={handleNativeShare}
         className="button button-small button-outline"
         style={{
           minHeight: "34px",
-          padding: "0 12px",
+          padding: "0 14px",
           fontSize: "12px",
           fontWeight: 600,
-          borderRadius: "10px",
+          borderRadius: "9999px",
         }}
       >
-        {copied ? "Tautan Tersalin" : "Salin Tautan PO"}
+        {copied ? "✓ Tautan Tersalin" : "Bagikan / Salin Tautan"}
       </button>
     </div>
   );

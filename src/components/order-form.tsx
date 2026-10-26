@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatRupiah } from "@/lib/marketplace-shared";
 import { PaymentProofUpload } from "@/components/payment-proof-upload";
 
@@ -83,6 +83,37 @@ export function OrderForm({
     }
   }
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const qName = params.get("name") || params.get("buyer_name");
+      const qWa = params.get("wa") || params.get("buyer_wa");
+      const qFaculty = params.get("faculty") || params.get("buyer_faculty");
+
+      if (qName) setBuyerName(qName);
+      if (qWa) {
+        setWhatsapp(qWa);
+        validateWa(qWa);
+      }
+      if (qFaculty) setFaculty(qFaculty);
+
+      if (!qName && !qWa) {
+        const saved = JSON.parse(localStorage.getItem("openpo_buyer_profile") || "null");
+        if (saved) {
+          if (saved.name) setBuyerName((prev) => prev || saved.name);
+          if (saved.faculty) setFaculty((prev) => prev || saved.faculty);
+          if (saved.whatsapp) {
+            setWhatsapp((prev) => {
+              if (!prev) validateWa(saved.whatsapp);
+              return prev || saved.whatsapp;
+            });
+          }
+        }
+      }
+    } catch {}
+  }, []);
+
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy || remaining < 1) return;
@@ -126,12 +157,18 @@ export function OrderForm({
 
       setOrderResult(result.order);
 
-      // Simpan riwayat pesanan ke localStorage untuk kenyamanan pembeli tamu (Guest UX)
-      if (typeof window !== "undefined" && result.order?.order_code) {
+      // Simpan profil pembeli & riwayat pesanan ke localStorage untuk kenyamanan pembeli tamu (Guest UX)
+      if (typeof window !== "undefined") {
         try {
-          const recent = JSON.parse(localStorage.getItem("openpo_recent_orders") || "[]");
-          const updated = [result.order.order_code, ...recent.filter((c: string) => c !== result.order.order_code)].slice(0, 8);
-          localStorage.setItem("openpo_recent_orders", JSON.stringify(updated));
+          localStorage.setItem(
+            "openpo_buyer_profile",
+            JSON.stringify({ name: buyerName.trim(), faculty: faculty.trim(), whatsapp: whatsapp.trim() })
+          );
+          if (result.order?.order_code) {
+            const recent = JSON.parse(localStorage.getItem("openpo_recent_orders") || "[]");
+            const updated = [result.order.order_code, ...recent.filter((c: string) => c !== result.order.order_code)].slice(0, 8);
+            localStorage.setItem("openpo_recent_orders", JSON.stringify(updated));
+          }
         } catch {}
       }
     } catch {
