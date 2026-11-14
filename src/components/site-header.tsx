@@ -2,10 +2,6 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "@/components/logout-button";
 
-function BrandMark() {
-  return <span aria-hidden="true" className="brand-mark"><span /><span /><span /></span>;
-}
-
 function MobileNavIcon({ kind }: { kind: "browse" | "track" | "orders" | "help" | "sell" }) {
   const common = { width: 20, height: 20, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.7, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true as const };
   if (kind === "browse") return <svg {...common}><circle cx="10.8" cy="10.8" r="6.8" /><path d="m16 16 4 4" /></svg>;
@@ -74,11 +70,8 @@ export async function SiteHeader() {
             </svg>
           </div>
           <div className="brand-copy">
-            <div className="brand-title-row">
-              <span className="brand-name">Kampusfess</span>
-              <span className="brand-campus-pill">OpenPO</span>
-            </div>
-            <small>Marketplace USU • POLMED</small>
+            <span className="brand-name">OpenPO</span>
+            <small>by kampusfess.id</small>
           </div>
         </Link>
 

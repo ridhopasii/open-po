@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { checkRateLimitDistributed, getClientIdentifier } from "@/lib/rate-limit";
+import { createOrderAccessToken, getOrderAccessCookieName, orderAccessCookieOptions } from "@/lib/order-access";
 
 // Regex format nomor WA Indonesia: 08xx atau +628xx atau 628xx
 const waRegex = /^(\+62|62|0)8\d{7,13}$/;
@@ -72,109 +73,77 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Sistem database belum siap." }, { status: 500 });
   }
 
-  type BatchQueryResult = {
-    id: string;
-    status: string;
-    closes_at: string;
-    quota: number;
-    reserved_quantity: number;
-    product: { id: string; price_idr: number; active: boolean } | null;
-  };
-
-  const { data: rawBatch, error: bErr } = await admin
-    .from("po_batches")
-    .select("id,status,closes_at,quota,reserved_quantity,product:po_products!inner(id,price_idr,active)")
-    .eq("id", batchId)
-    .single();
-
-  const batch = rawBatch as unknown as BatchQueryResult | null;
-
-  // 1. Validasi status dan ketersediaan kuota awal
-  if (bErr || !batch) {
-    return NextResponse.json({ error: "Batch PO tidak ditemukan." }, { status: 404 });
-  }
-  if (batch.status !== "open" || new Date(batch.closes_at) <= new Date()) {
-    return NextResponse.json({ error: "PO ini sudah ditutup." }, { status: 400 });
-  }
-  if (batch.reserved_quantity + quantity > batch.quota) {
-    return NextResponse.json({ error: "Kuota tersisa tidak mencukupi untuk jumlah tersebut." }, { status: 400 });
-  }
-
-  // 2. Cek idempotency: jika requestId sama sudah pernah dipesan, kembalikan pesanan yang sama
+  // Reject reused idempotency keys when their order details do not match this request.
   const { data: existingOrder } = await admin
     .from("po_orders")
-    .select("id,order_code,quantity,unit_price_idr,total_price_idr,status,payment_method,notes")
+    .select("id,order_code,batch_id,buyer_name,buyer_faculty,buyer_whatsapp,quantity,unit_price_idr,total_price_idr,status,payment_method,notes,expires_at")
     .eq("client_request_id", requestId)
     .maybeSingle();
 
   if (existingOrder) {
-    return NextResponse.json({ order: existingOrder }, { status: 200 });
+    const sameRequest =
+      existingOrder.batch_id === batchId &&
+      existingOrder.quantity === quantity &&
+      existingOrder.buyer_name === buyerName.trim() &&
+      existingOrder.buyer_faculty === faculty.trim() &&
+      existingOrder.buyer_whatsapp.replace(/\D/g, "") === whatsapp.replace(/\D/g, "");
+    if (!sameRequest) {
+      return NextResponse.json({ error: "Permintaan ini sudah digunakan. Muat ulang halaman lalu coba kembali." }, { status: 409 });
+    }
+    const response = NextResponse.json({ order: existingOrder }, { status: 200 });
+    response.cookies.set(
+      getOrderAccessCookieName(existingOrder.order_code),
+      createOrderAccessToken(existingOrder.id, existingOrder.order_code),
+      orderAccessCookieOptions,
+    );
+    return response;
   }
 
-  // 3. Kunci kuota secara atomik: hanya berhasil jika sisa kuota masih memenuhi syarat
-  const newReserved = batch.reserved_quantity + quantity;
-  const { data: updatedBatch, error: updateErr } = await admin
-    .from("po_batches")
-    .update({
-      reserved_quantity: newReserved,
-      status: newReserved >= batch.quota ? "closed" : batch.status,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", batch.id)
-    .lte("reserved_quantity", batch.quota - quantity)
-    .select("id,reserved_quantity,quota")
-    .single();
+  // Reserve quota and insert the order inside one database transaction.
+  const { data: placed, error: placeError } = await admin.rpc("po_place_order_v2", {
+    p_batch_id: batchId,
+    p_quantity: quantity,
+    p_buyer_name: buyerName.trim(),
+    p_buyer_faculty: faculty.trim(),
+    p_buyer_whatsapp: whatsapp.trim(),
+    p_payment_method: paymentMethod,
+    p_notes: notes.trim(),
+    p_client_request_id: requestId,
+    p_buyer_id: user?.id ?? null,
+  });
 
-  if (updateErr || !updatedBatch) {
-    return NextResponse.json({ error: "Mohon maaf, kuota PO baru saja terisi penuh oleh pemesan lain." }, { status: 400 });
+  const placedOrder = Array.isArray(placed) ? placed[0] : placed;
+  if (placeError || !placedOrder) {
+    const message = placeError?.message || "Gagal menyimpan pesanan.";
+    const conflict = /kuota|ditutup|tidak aktif|tidak ditemukan|sudah digunakan|tidak mencukupi/i.test(message);
+    return NextResponse.json({ error: message }, { status: conflict ? 409 : 500 });
   }
 
-  // 4. Buat record pesanan dengan kode Base32 (10 karakter acak) dan batas bayar 2 jam
-  const price = batch.product?.price_idr || 0;
-  const base32Chars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
-  let randomPart = "";
-  for (let i = 0; i < 10; i++) {
-    randomPart += base32Chars.charAt(Math.floor(Math.random() * base32Chars.length));
-  }
-  const orderCode = `PO-${randomPart}`;
-  const expiresAt = new Date(Date.now() + 2 * 3600 * 1000).toISOString();
-
-  // Bersihkan pesanan kedaluwarsa secara oportunitis (aman-gagal)
-  try {
-    await admin.rpc("release_expired_po_orders");
-  } catch {}
-
-  const { data: newOrder, error: oErr } = await admin
+  const { data: newOrder, error: orderFetchError } = await admin
     .from("po_orders")
-    .insert({
-      order_code: orderCode,
-      batch_id: batch.id,
-      buyer_id: user ? user.id : null,
-      buyer_name: buyerName.trim(),
-      buyer_faculty: faculty.trim(),
-      buyer_whatsapp: whatsapp.trim(),
-      quantity,
-      unit_price_idr: price,
-      payment_method: paymentMethod,
-      notes: notes.trim(),
-      client_request_id: requestId,
-      status: "pending",
-      expires_at: expiresAt,
-    })
-    .select("id,order_code,quantity,unit_price_idr,total_price_idr,status,payment_method,notes,expires_at")
+    .select("id,order_code,batch_id,buyer_name,buyer_faculty,buyer_whatsapp,quantity,unit_price_idr,total_price_idr,status,payment_method,notes,expires_at")
+    .eq("id", placedOrder.id)
     .single();
 
-  if (oErr || !newOrder) {
-    // Rollback kuota jika pembuatan order gagal
-    await admin
-      .from("po_batches")
-      .update({
-        reserved_quantity: batch.reserved_quantity,
-        status: batch.status,
-      })
-      .eq("id", batch.id);
-    return NextResponse.json({ error: oErr?.message || "Gagal menyimpan pesanan." }, { status: 500 });
+  if (orderFetchError || !newOrder) {
+    return NextResponse.json({ error: "Pesanan tercatat, tetapi detailnya belum dapat dimuat. Lacak dengan kode pesanan." }, { status: 503 });
   }
 
-  return NextResponse.json({ order: newOrder }, { status: 201 });
+  const sameRequest =
+    newOrder.batch_id === batchId &&
+    newOrder.quantity === quantity &&
+    newOrder.buyer_name === buyerName.trim() &&
+    newOrder.buyer_faculty === faculty.trim() &&
+    newOrder.buyer_whatsapp.replace(/\D/g, "") === whatsapp.replace(/\D/g, "");
+  if (!sameRequest) {
+    return NextResponse.json({ error: "Permintaan ini sudah digunakan. Muat ulang halaman lalu coba kembali." }, { status: 409 });
+  }
+
+  const response = NextResponse.json({ order: newOrder }, { status: 201 });
+  response.cookies.set(
+    getOrderAccessCookieName(newOrder.order_code),
+    createOrderAccessToken(newOrder.id, newOrder.order_code),
+    orderAccessCookieOptions,
+  );
+  return response;
 }

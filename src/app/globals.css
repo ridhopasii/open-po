@@ -3238,6 +3238,214 @@ h1, h2, h3, p { margin-top: 0; }
   background: #20ba5a !important;
 }
 
+.order-access-card {
+  width: min(calc(100% - 32px), 420px);
+  margin: 8vh auto;
+  padding: 28px;
+  border: 1px solid var(--border-ui);
+  border-radius: var(--radius-card);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+}
+
+.order-access-card h1 {
+  margin: 18px 0 8px;
+  color: var(--text-main);
+  font-size: 23px;
+  letter-spacing: -0.035em;
+}
+
+.order-access-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: fit-content;
+  margin-bottom: 24px;
+  text-decoration: none;
+}
+
+.order-access-brand strong {
+  color: var(--usu-emerald);
+  font-size: 21px;
+  letter-spacing: -0.04em;
+}
+
+.order-access-brand small {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.order-access-card > p {
+  margin: 0 0 22px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.order-access-card form {
+  display: grid;
+  gap: 10px;
+}
+
+.order-access-card label {
+  color: var(--text-main);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.order-access-card input {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 13px;
+  border: 1px solid var(--border-ui);
+  border-radius: var(--radius-button);
+  color: var(--text-main);
+  font-size: 18px;
+  letter-spacing: 0.2em;
+}
+
+.order-access-card input:focus-visible {
+  outline: 3px solid rgba(18, 107, 73, 0.2);
+  border-color: var(--usu-emerald);
+}
+
+.order-access-card button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.order-access-mark {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--usu-emerald);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.order-access-error {
+  margin: 0;
+  color: #b42318;
+  font-size: 12px;
+}
+
+.order-access-back {
+  display: inline-block;
+  margin-top: 18px;
+  color: var(--text-muted);
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* OpenPO brand alignment and compact five-destination mobile navigation */
+.brand-name,
+.brand-accent {
+  color: var(--usu-emerald) !important;
+}
+
+.brand-mark span,
+.brand-mark span:nth-child(2) {
+  background: var(--usu-emerald) !important;
+}
+
+.brand-copy small {
+  color: var(--text-muted) !important;
+  font-size: 10px !important;
+}
+
+.button:not(.button-light):not(.button-dark) {
+  border-color: var(--usu-emerald) !important;
+  background: var(--usu-emerald) !important;
+  color: #fff !important;
+}
+
+.button:not(.button-light):not(.button-dark):hover {
+  border-color: var(--usu-emerald-hover) !important;
+  background: var(--usu-emerald-hover) !important;
+}
+
+.button-primary,
+.button-primary-action,
+.btn-primary {
+  background: var(--usu-emerald) !important;
+  border-color: var(--usu-emerald) !important;
+}
+
+.button-primary:hover,
+.button-primary-action:hover,
+.btn-primary:hover {
+  background: var(--usu-emerald-hover) !important;
+  border-color: var(--usu-emerald-hover) !important;
+}
+
+.mobile-nav-sell,
+.mobile-nav-sell svg {
+  color: var(--usu-emerald) !important;
+}
+
+.shop-chip.selected {
+  background: var(--usu-emerald) !important;
+  border-color: var(--usu-emerald) !important;
+  color: #fff !important;
+}
+
+.shop-title-row h1 {
+  margin: 0 !important;
+  color: var(--text-main) !important;
+  font: 700 25px/1.2 var(--font-jakarta), sans-serif !important;
+  letter-spacing: -0.035em !important;
+}
+
+.quota-bar-fill.bar-ok {
+  background: var(--usu-emerald) !important;
+}
+
+.card-price {
+  color: var(--usu-emerald) !important;
+}
+
+.card-action-btn {
+  color: var(--usu-emerald) !important;
+  background: #edf7f2 !important;
+  border-color: #c6e2d4 !important;
+}
+
+.shop-card:hover .card-action-btn,
+.shop-card-live-wrap:hover .card-action-btn {
+  color: #fff !important;
+  background: var(--usu-emerald) !important;
+  border-color: var(--usu-emerald) !important;
+}
+
+.shop-search:focus-within {
+  border-color: var(--usu-emerald) !important;
+  box-shadow: 0 0 0 3px rgba(18, 107, 73, 0.12) !important;
+}
+
+@media (max-width: 560px) {
+  .mobile-nav {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  }
+
+  .mobile-nav-link {
+    min-width: 0;
+    font-size: 9px;
+  }
+
+  .shop-home {
+    padding-bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .shop-card-info h2 {
+    font-size: 13px !important;
+    line-height: 1.35 !important;
+  }
+}
+
 .modal-action-buttons {
   display: flex;
   flex-direction: column;

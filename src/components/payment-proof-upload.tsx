@@ -43,7 +43,7 @@ export function PaymentProofUpload({
       if (!res.ok) {
         setErrorMsg(data.error || "Gagal mengunggah bukti transfer.");
       } else {
-        setProofUrl(data.publicUrl || data.path);
+        setProofUrl(data.signedUrl || null);
         setSuccessMsg("Bukti transfer berhasil diunggah!");
       }
     } catch {

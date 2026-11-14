@@ -6,7 +6,6 @@ import { useMemo, useState } from "react";
 import type { OpenBatch } from "@/lib/marketplace-shared";
 import { formatCampusDate, formatRupiah, getSellerAvatarUrl } from "@/lib/marketplace-shared";
 import { SellerIdentity } from "@/components/seller-identity";
-import { sampleListings } from "@/data/sample-listings";
 
 const categories = ["Semua", "Makanan", "Minuman", "Fashion", "Kerajinan", "Lainnya"];
 
@@ -48,11 +47,10 @@ function LiveCard({ batch }: { batch: OpenBatch }) {
           src={photo}
           alt={batch.product.name}
           fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          sizes="(max-width: 560px) calc((100vw - 32px) / 2), (max-width: 760px) calc((100vw - 54px) / 3), (max-width: 1050px) calc((100vw - 80px) / 4), (max-width: 1440px) calc((100vw - 160px) / 5), 288px"
           className="object-cover"
         />
         <div className="card-top-badges">
-          <span className="live-badge-chip">PO Aktif</span>
           {isAlmostFull && <span className="urgent-badge-chip">Sisa {remaining}!</span>}
           {isFull && <span className="full-badge-chip">Kuota Penuh</span>}
         </div>
@@ -78,9 +76,8 @@ function LiveCard({ batch }: { batch: OpenBatch }) {
           </div>
           <div className="quota-text-row">
             <span>
-              Terpesan: <strong>{batch.reserved_quantity}</strong> / {batch.quota}
+              Sisa <strong>{remaining}</strong> dari {batch.quota} kuota
             </span>
-            <span className="quota-percent">{percentBooked}%</span>
           </div>
         </div>
 
@@ -114,40 +111,11 @@ function LiveCard({ batch }: { batch: OpenBatch }) {
   );
 }
 
-function SampleCard({ item, index }: { item: (typeof sampleListings)[number]; index: number }) {
-  return (
-    <Link
-      href={`/po/${item.id}`}
-      className="shop-card shop-card-sample shop-card-sample-link"
-      aria-label={`Buka detail PO ${item.name}`}
-    >
-      <div className="shop-card-photo">
-        <Image
-          src={item.photo}
-          alt={item.name}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          priority={index < 2}
-        />
-        <span className="demo-tag">Contoh PO</span>
-      </div>
-      <div className="shop-card-info">
-        <span className="shop-card-category">{item.category}</span>
-        <h2>{item.name}</h2>
-        <p>{item.note}</p>
-        <strong>{formatRupiah(item.price)}</strong>
-        <SellerIdentity name={item.seller} faculty={item.faculty} compact />
-      </div>
-    </Link>
-  );
-}
-
 export function MarketHome({ batches }: { batches: OpenBatch[] }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("Semua");
   const [sortBy, setSortBy] = useState<"closing" | "popular" | "price_asc" | "price_desc">("closing");
 
-  const samplesVisible = false;
   const needle = query.trim().toLocaleLowerCase("id-ID");
 
   const filteredBatches = useMemo(() => {
@@ -186,11 +154,9 @@ export function MarketHome({ batches }: { batches: OpenBatch[] }) {
         <section className="shop-toolbar" aria-label="Cari produk">
           <div className="shop-title-row">
             <div>
-              <h2>Etalase Batch PO Terbuka</h2>
+              <h1>Etalase PO</h1>
               <p>
-                {samplesVisible
-                  ? "Contoh barang · belum ada PO aktif"
-                  : `${filteredBatches.length} PO siap dipesan langsung sekarang`}
+                {`${filteredBatches.length} PO siap dipesan langsung sekarang`}
               </p>
             </div>
             <div className="toolbar-right-actions">
@@ -229,7 +195,7 @@ export function MarketHome({ batches }: { batches: OpenBatch[] }) {
               <select
                 id="sort-select"
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
+                onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
                 className="sort-dropdown"
               >
                 <option value="closing">Segera Ditutup</option>
@@ -253,11 +219,6 @@ export function MarketHome({ batches }: { batches: OpenBatch[] }) {
             ))}
           </div>
 
-          {samplesVisible && (
-            <p className="demo-notice">
-              Contoh tampilan saja. Barang-barang ini belum bisa dipesan.
-            </p>
-          )}
         </section>
 
         {itemCount > 0 ? (

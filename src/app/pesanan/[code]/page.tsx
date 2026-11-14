@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/site-header";
 import { PaymentProofUpload } from "@/components/payment-proof-upload";
+import { OrderAccessGate } from "@/components/order-access-gate";
 import { OrderSuccessActions } from "@/components/order-success-actions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { formatCampusDate, formatRupiah } from "@/lib/marketplace-shared";
+import { getPaymentProofObjectPath, hasOrderAccess } from "@/lib/order-access";
 
 export const metadata: Metadata = {
   title: "Konfirmasi Pesanan · OpenPO",
@@ -20,7 +21,48 @@ const STATUS_LABELS: Record<string, { label: string; color: string; desc: string
   cancelled: { label: "Dibatalkan",          color: "status-cancelled", desc: "Pesanan ini telah dibatalkan." },
 };
 
-async function getOrderByCode(code: string) {
+type OrderRecord = {
+  id: string;
+  order_code: string;
+  buyer_name: string;
+  buyer_faculty: string;
+  buyer_whatsapp: string;
+  quantity: number;
+  unit_price_idr: number | null;
+  total_price_idr: number;
+  status: string;
+  payment_method: string | null;
+  payment_proof_path: string | null;
+  notes: string | null;
+  created_at: string;
+  expires_at: string | null;
+  batch: {
+    id: string;
+    title: string;
+    closes_at: string;
+    pickup_at: string;
+    pickup_point: string;
+    pickup_note: string | null;
+    status: string;
+    product: {
+      name: string;
+      category: string;
+      price_idr: number;
+      seller: {
+        display_name: string;
+        faculty: string;
+        whatsapp: string;
+        bank_name: string | null;
+        bank_number: string | null;
+        bank_holder: string | null;
+        qris_nmid: string | null;
+        verified_student: boolean | null;
+      };
+    };
+  };
+};
+
+async function getOrderByCode(code: string): Promise<OrderRecord | null> {
   const supabase = createAdminClient();
   if (!supabase) return null;
 
@@ -39,7 +81,7 @@ async function getOrderByCode(code: string) {
       .maybeSingle();
 
     if (error || !data) return null;
-    return data;
+    return data as unknown as OrderRecord;
   } catch {
     return null;
   }
@@ -51,8 +93,13 @@ type PageProps = {
 
 export default async function OrderConfirmationPage({ params }: PageProps) {
   const { code } = await params;
-  const rawOrder = await getOrderByCode(code);
-  const order = rawOrder as any;
+  const orderCode = code.toUpperCase();
+  if (!(await hasOrderAccess(orderCode))) {
+    return <OrderAccessGate orderCode={orderCode} />;
+  }
+
+  const rawOrder = await getOrderByCode(orderCode);
+  const order = rawOrder;
 
   if (!order) {
     // Fallback demo untuk kode yang tidak ada
@@ -76,23 +123,16 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
     );
   }
 
-  const batch = order.batch as unknown as {
-    id: string;
-    title: string;
-    closes_at: string;
-    pickup_at: string;
-    pickup_point: string;
-    pickup_note: string | null;
-    status: string;
-    product: {
-      name: string;
-      category: string;
-      price_idr: number;
-      seller: { display_name: string; faculty: string; whatsapp: string };
-    };
-  };
+  const batch = order.batch;
 
   const statusInfo = STATUS_LABELS[order.status] ?? STATUS_LABELS["pending"];
+  const admin = createAdminClient();
+  const proofPath = getPaymentProofObjectPath(order.payment_proof_path);
+  let proofUrl: string | null = null;
+  if (admin && proofPath) {
+    const { data } = await admin.storage.from("po-payment-proofs").createSignedUrl(proofPath, 60 * 10);
+    proofUrl = data?.signedUrl ?? null;
+  }
   const sellerWa = batch.product.seller.whatsapp.replace(/\D/g, "");
   const sellerWaLink = `https://wa.me/${sellerWa.startsWith("0") ? "62" + sellerWa.slice(1) : sellerWa}?text=${encodeURIComponent(`Halo, saya ${order.buyer_name} ingin konfirmasi pesanan ${order.order_code} untuk ${batch.product.name}`)}`;
   const trackLink = `/lacak?q=${encodeURIComponent(order.order_code)}`;
@@ -114,12 +154,12 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
             orderCode={order.order_code}
             expiresAt={order.expires_at}
             status={order.status}
-            hasProof={!!order.payment_proof_path}
+            hasProof={!!proofPath}
             totalAmount={order.total_price_idr}
-            bankName={(batch.product.seller as any)?.bank_name}
-            bankNumber={(batch.product.seller as any)?.bank_number}
-            bankHolder={(batch.product.seller as any)?.bank_holder}
-            qrisNmid={(batch.product.seller as any)?.qris_nmid}
+            bankName={batch.product.seller.bank_name}
+            bankNumber={batch.product.seller.bank_number}
+            bankHolder={batch.product.seller.bank_holder}
+            qrisNmid={batch.product.seller.qris_nmid}
           />
 
           {/* Product info */}
@@ -165,7 +205,7 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
             </div>
             <PaymentProofUpload
               orderCode={order.order_code}
-              initialProofPath={order.payment_proof_path}
+              initialProofPath={proofUrl}
             />
           </div>
 
@@ -216,7 +256,7 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
               <div>
                 <div className="order-confirm-seller-name" style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
                   <span>{batch.product.seller.display_name}</span>
-                  {(batch.product.seller as any)?.verified_student !== false && (
+                  {batch.product.seller.verified_student !== false && (
                     <span style={{ fontSize: "11px", fontWeight: 700, color: "#059669", background: "#ecfdf5", border: "1px solid #a7f3d0", padding: "1px 8px", borderRadius: "99px" }}>
                       ✓ Mitra Terverifikasi (KTM)
                     </span>
